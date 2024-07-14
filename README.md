@@ -7,8 +7,8 @@ This library covers the complete set of commands for the HLK-LD2410x presence se
 
 ## Installation
 
-1. Grab the zip-file `MyLD2410.zip` from the source folder (right-click, "Save link as..."). Alternatively, you may clone the whole repository, or download it (from the "Downloads" menu on the left)
-1. Unzip the file in the Arduino/libraries folder. Restart the Arduino IDE.
+1. Download or clone the whole repository.
+1. Unzip the downloaded archive in the Arduino/libraries folder. Restart the Arduino IDE.
 1. Include the header file: `#include <my_ld2410.h>` in your sketch.
 
 ## Usage
