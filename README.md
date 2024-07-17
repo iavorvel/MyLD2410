@@ -12,6 +12,7 @@ This library covers the complete set of commands for the HLK-LD2410x presence se
     - Unzip the downloaded archive in the Arduino/libraries folder. 
 
     - Restart the Arduino IDE.
+
 1. Include the header file: `#include <my_ld2410.h>` in your sketch.
 
 ## Usage
@@ -34,11 +35,22 @@ if (!sensor.begin()) {
 ```
 
 * In the `loop()` function, call as often as possible `sensor.check()`. This function returns:
+    
     1. `MyLD2410::DATA` if a data frame is received
+    
     1. `MyLD2410::ACK` if a command-response frame is received
+    
     1. `MyLD2410::FAIL` if no useful information was processed
 
 * Use any of the many convenience functions to extract the data.
 
 ## Examples
-* Once the library is installed, navigate to: `File->Examples->MyLD2401` to play with working examples.
+* Once the library is installed, navigate to: `File->Examples->MyLD2410` to play with working examples.
+    
+    1. `sensor_data` - this sketch retrieves all data frames from the sensor and outputs useful information every second. Handles both basic and enhanced (engineering) modes.
+    
+    1. `print_parameters`- this sketch prints the device parameters.
+
+    1. `modify_parameters` - this sketch demonstrates how to modify various sensor parameters. At the end, the original state of the sensor is restored.
+
+    1. `factory_reset` - this sketch restores the factory default values of the sensor parameters.

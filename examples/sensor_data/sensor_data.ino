@@ -1,5 +1,34 @@
+/*
+  This program reads all data received from
+  the HLK-LD2410 presence sensor and periodically
+  prints the values to the serial monitor.
+  
+  Several #defines control the behavior of the program:
+  #define SERIAL_BAUD_RATE sets the serial monitor baud rate
+  #define ENHANCED_MODE enables the enhanced (engineering)
+  mode of the sensor. Comment that line to switch to basic mode.
+  #define DEBUG_MODE enables the printing of debug information
+  (all reaceived frames are printed). Comment the line to disable
+  debugging.
+
+  Communication with the sensor is handled by the 
+  "MyLD2410" library Copyright (c) Iavor Veltchev 2024
+
+  Use only hardware UART at the default baud rate 256000,
+  or change the #define LD2410_BAUD_RATE to match your sensor.
+  For ESP32 or other boards that allow dynamic UART pins,
+  modify the RX_PIN and TX_PIN defines
+
+  Connection diagram:
+  Arduino/ESP32 RX  -- TX LD2410 
+  Arduino/ESP32 TX  -- RX LD2410
+  Arduino/ESP32 GND -- GND LD2410
+  Provide sufficient power to the sensor Vcc (200mA, 5-12V) 
+*/
 #ifdef ESP32
 #define sensorSerial Serial2
+#define RX_PIN 16
+#define TX_PIN 17
 #elif defined(ARDUINO_SAMD_NANO_33_IOT)
 #define sensorSerial Serial1
 #else
@@ -11,7 +40,9 @@
 #define ENHANCED_MODE
 // #define DEBUG_MODE
 
-#include <MyLD2410.h>
+//Change the communication baud rate here, if necessary
+//#define LD2410_BAUD_RATE 256000
+#include "MyLD2410.h"
 
 #ifdef DEBUG_MODE
 MyLD2410 sensor(sensorSerial, true);
@@ -19,33 +50,28 @@ MyLD2410 sensor(sensorSerial, true);
 MyLD2410 sensor(sensorSerial);
 #endif
 
-unsigned long nextPrint = 0, printEvery = 1000; // print every second
+unsigned long nextPrint = 0, printEvery = 1000;  // print every second
 
-void printValue(const byte &val)
-{
+void printValue(const byte &val) {
   Serial.print(' ');
   Serial.print(val);
 }
 
-void printData()
-{
+void printData() {
   Serial.print(sensor.statusString());
-  if (sensor.presenceDetected())
-  {
+  if (sensor.presenceDetected()) {
     Serial.print(", distance: ");
     Serial.print(sensor.detectedDistance());
     Serial.print("cm");
   }
   Serial.println();
-  if (sensor.movingTargetDetected())
-  {
+  if (sensor.movingTargetDetected()) {
     Serial.print(" MOVING    = ");
     Serial.print(sensor.movingTargetSignal());
     Serial.print("@");
     Serial.print(sensor.movingTargetDistance());
     Serial.print("cm ");
-    if (sensor.inEnhancedMode())
-    {
+    if (sensor.inEnhancedMode()) {
       Serial.print("\n signals->[");
       sensor.getMovingSignals().forEach(printValue);
       Serial.print(" ] thresholds:");
@@ -53,15 +79,13 @@ void printData()
     }
     Serial.println();
   }
-  if (sensor.stationaryTargetDetected())
-  {
+  if (sensor.stationaryTargetDetected()) {
     Serial.print(" STATIONARY= ");
     Serial.print(sensor.stationaryTargetSignal());
     Serial.print("@");
     Serial.print(sensor.stationaryTargetDistance());
     Serial.print("cm ");
-    if (sensor.inEnhancedMode())
-    {
+    if (sensor.inEnhancedMode()) {
       Serial.print("\n signals->[");
       sensor.getStationarySignals().forEach(printValue);
       Serial.print(" ] thresholds:");
@@ -72,54 +96,30 @@ void printData()
   Serial.println();
 }
 
-void printParameters()
-{
-  const MyLD2410::ValuesArray &mThr = sensor.getMovingThresholds();
-  const MyLD2410::ValuesArray &sThr = sensor.getStationaryThresholds();
-  byte noone = sensor.getNoOneWindow(), range = sensor.getRange(), res = sensor.getResolution();
-
-  Serial.print("Max range: ");
-  Serial.print((range + 1) * res);
-  Serial.print("cm\nMoving thresholds    [0,");
-  Serial.print(mThr.N);
-  Serial.print("]:");
-  mThr.forEach(printValue);
-  Serial.print("\nStationary thresholds[0,");
-  Serial.print(sThr.N);
-  Serial.print("]:");
-  sThr.forEach(printValue);
-  Serial.print("\nNo-one window: ");
-  Serial.print(noone);
-  Serial.println('s');
-}
-
-void setup()
-{
+void setup() {
   Serial.begin(SERIAL_BAUD_RATE);
 #ifdef ESP32
-  sensorSerial.begin(LD2410_BAUD_RATE, SERIAL_8N1, 16, 17);
+  sensorSerial.begin(LD2410_BAUD_RATE, SERIAL_8N1, RX_PIN, TX_PIN);
 #else
   sensorSerial.begin(LD2410_BAUD_RATE);
 #endif
   delay(2000);
   Serial.println(__FILE__);
-  if (!sensor.begin())
-  {
-    Serial.println("Failed to communicate with the sensor");
+  if (!sensor.begin()) {
+    Serial.println("Failed to communicate with the sensor.");
     while (true)
       ;
   }
-  printParameters();
+
 #ifdef ENHANCED_MODE
   sensor.enhancedMode();
 #endif
-  delay(2000);
+
+  delay(nextPrint);
 }
 
-void loop()
-{
-  if ((sensor.check() == MyLD2410::Response::DATA) && (millis() > nextPrint))
-  {
+void loop() {
+  if ((sensor.check() == MyLD2410::Response::DATA) && (millis() > nextPrint)) {
     nextPrint = millis() + printEvery;
     printData();
   }
