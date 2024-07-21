@@ -13,7 +13,7 @@ This library covers the complete set of commands for the HLK-LD2410x presence se
 
     - Restart the Arduino IDE.
 
-1. Include the header file: `#include <my_ld2410.h>` in your sketch.
+1. Include the header file: `#include <MyLD2410.h>` in your sketch.
 
 ## Usage
 * Decide which serial stream you'll be using for communication
