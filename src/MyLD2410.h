@@ -137,16 +137,16 @@ public:
   /**
    * @brief Get the distance to the stationary target in [cm]
    *
-   * @return const unsigned long - distance in [cm]
+   * @return unsigned long - distance in [cm]
    */
-  const unsigned long stationaryTargetDistance();
+  unsigned long stationaryTargetDistance();
 
   /**
    * @brief Get the signal from the stationary target
    *
-   * @return const byte - signal value [0:100]
+   * @return byte - signal value [0:100]
    */
-  const byte stationaryTargetSignal();
+  byte stationaryTargetSignal();
 
   /**
    * @brief Get the Stationary Signals object, if in enhanced mode
@@ -163,16 +163,16 @@ public:
   /**
    * @brief Get the distance to the moving target in [cm]
    *
-   * @return const unsigned long - distance in [cm]
+   * @return unsigned long - distance in [cm]
    */
-  const unsigned long movingTargetDistance();
+  unsigned long movingTargetDistance();
 
   /**
    * @brief Get the signal from the moving target
    *
-   * @return const byte - signal value [0:100]
+   * @return byte - signal value [0:100]
    */
-  const byte movingTargetSignal();
+  byte movingTargetSignal();
 
   /**
    * @brief Get the Moving Signals object, if in enhanced mode
@@ -181,7 +181,7 @@ public:
    */
   const ValuesArray &getMovingSignals();
 
-  const unsigned long detectedDistance();
+  unsigned long detectedDistance();
 
   /**
    * @brief Get the Bluetooth MAC address as an array byte[6]
@@ -340,8 +340,7 @@ public:
   bool setGateParameters(byte gate, byte movingThreshold = 100, byte stationaryThreshold = 100);
 
   /**
-   * @brief Set the detection range for moving targets, stationary targets,
-   * as well as the no-one window
+   * @brief Set the detection range for moving targets, stationary targets, as well as the no-one window
    *
    * @param movingGate
    * @param stationaryGate
@@ -403,6 +402,33 @@ public:
    * @return true on success
    */
   bool requestBToff();
+
+  /**
+   * @brief Set a new BT password.
+   *
+   * The BT password must be 6 characters long. If the string is shorter, it will be padded with spaces '\20'. If it is longer, only the first 6 characters will be used.
+   *
+   * @param passwd c-string
+   * @return true on success
+   */
+  bool setBTpassword(const char *passwd);
+
+  /**
+   * @brief Set a new BT password.
+   *
+   * The BT password must be 6 characters long. If the string is shorter, it will be padded with spaces '\20'. If it is longer, only the first 6 characters will be used.
+   *
+   * @param passwd Arduino String
+   * @return true on success
+   */
+  bool setBTpassword(const String &passwd);
+
+  /**
+   * @brief Reset the BT password
+   *
+   * @return true on success
+   */
+  bool resetBTpassword();
 };
 
 #endif // MY_LD2410_H

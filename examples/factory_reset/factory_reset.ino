@@ -19,12 +19,17 @@
   Provide sufficient power to the sensor Vcc (200mA, 5-12V) 
 */
 
-#ifdef ESP32
-#define sensorSerial Serial2
+#if defined(ARDUINO_SAMD_NANO_33_IOT)
+//RX_PIN is D1, TX_PIN is D0
+#define sensorSerial Serial1
+#elif defined(ARDUINO_XIAO_ESP32C3) || defined(ARDUINO_XIAO_ESP32C6)
+//RX_PIN is D7, TX_PIN is D6
+#define sensorSerial Serial0
+#elif defined(ESP32)
+//Other ESP32 device - choose available GPIO pins
+#define sensorSerial Serial1
 #define RX_PIN 16
 #define TX_PIN 17
-#elif defined(ARDUINO_SAMD_NANO_33_IOT)
-#define sensorSerial Serial1
 #else
 #error "This sketch only works on ESP32 or Arduino Nano 33IoT"
 #endif
@@ -32,6 +37,8 @@
 // User defines
 #define SERIAL_BAUD_RATE 115200
 
+//Change the communication baud rate here, if necessary
+//#define LD2410_BAUD_RATE 256000
 #include "MyLD2410.h"
 
 MyLD2410 sensor(sensorSerial);
@@ -69,17 +76,16 @@ void printParameters() {
 
 void setup() {
   Serial.begin(SERIAL_BAUD_RATE);
-#ifdef ESP32
-  sensorSerial.begin(LD2410_BAUD_RATE, SERIAL_8N1, RX_PIN, TX_PIN);
-#else
+#if defined(ARDUINO_XIAO_ESP32C3) || defined(ARDUINO_XIAO_ESP32C6) || defined(ARDUINO_SAMD_NANO_33_IOT)
   sensorSerial.begin(LD2410_BAUD_RATE);
+#else
+  sensorSerial.begin(LD2410_BAUD_RATE, SERIAL_8N1, RX_PIN, TX_PIN);
 #endif
   delay(2000);
   Serial.println(__FILE__);
   if (!sensor.begin()) {
     Serial.println("Failed to communicate with the sensor.");
-    while (true)
-      ;
+    while (true) {}
   }
 
   printParameters();
@@ -89,8 +95,8 @@ void setup() {
   if (sensor.requestReset()) {
     printParameters();
     Serial.println("Done!");
-  }
-  else Serial.println("Fail");
+  } else Serial.println("Fail");
+
 }
 
 void loop() {
