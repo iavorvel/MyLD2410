@@ -125,6 +125,26 @@ public:
   bool inEnhancedMode();
 
   /**
+   * @brief Get the status of the sensor:
+   * 0 - No presence;
+   * 1 - Moving only;
+   * 2 - Stationary only;
+   * 3 - Both moving and stationary;
+   * 255 - The sensor status is invalid
+   *
+   * @return byte
+   */
+  byte getStatus();
+
+  /**
+   * @brief Get the presence status as a c-string
+   *
+   * @return const char* ["No target", "Moving only",
+   * "Stationary only", "Both moving and stationary"]
+   */
+  const char *statusString();
+
+  /**
    * @brief Check whether presence was detected in the latest frame
    */
   bool presenceDetected();
@@ -217,14 +237,6 @@ public:
    * @return const SensorData&
    */
   const SensorData &getSensorData();
-
-  /**
-   * @brief Get the presence status as a c-string
-   *
-   * @return const char* ["No target", "Moving only",
-   * "Stationary only", "Both moving and stationary"]
-   */
-  const char *statusString();
 
   /**
    * @brief Get the sensor resolution (gate-width) in [cm]
