@@ -22,14 +22,14 @@ public:
       if (this != &other)
       {
         N = other.N;
-        for (byte i = 0; i < N; i++)
+        for (byte i = 0; i <= N; i++)
           values[i] = other.values[i];
       }
       return *this;
     }
     void forEach(void (*func)(const byte &val)) const
     {
-      for (byte i = 0; i < N; i++)
+      for (byte i = 0; i <= N; i++)
         func(values[i]);
     }
   };
@@ -340,6 +340,16 @@ public:
   bool setGateParameters(byte gate, byte movingThreshold = 100, byte stationaryThreshold = 100);
 
   /**
+   * @brief Set the parameters for all gates at once, as well as the no-one window
+   *
+   * @param moving_thresholds as a ValueArray
+   * @param stationary_thresholds as a ValueArray
+   * @param noOneWindow
+   * @return true on success
+   */
+  bool setGateParameters(const ValuesArray &moving_thresholds, const ValuesArray &stationary_thresholds, byte noOneWindow = 5);
+
+  /**
    * @brief Set the detection range for moving targets, stationary targets, as well as the no-one window
    *
    * @param movingGate
@@ -348,8 +358,6 @@ public:
    * @return true on success
    */
   bool setMaxGate(byte movingGate, byte stationaryGate, byte noOneWindow = 5);
-
-  bool setGateParameters(const ValuesArray &moving_thresholds, const ValuesArray &stationary_thresholds, byte noOneWindow = 5);
 
   /**
    * @brief Set the no-one window parameter
