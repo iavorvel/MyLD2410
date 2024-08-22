@@ -75,3 +75,5 @@ if (!sensor.begin()) {
         - If you provide a shorter one, it will be padded with spaces (0x20). 
         
         - To restore the default password, uncomment the line `#define RESET_PASSWORD` and flash the sketch again.
+
+    1. `set_baud_rate` - sets and tests a new baud rate for communication with the sensor. _Be careful not to get locked out of your sensor._

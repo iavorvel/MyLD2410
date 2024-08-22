@@ -449,6 +449,13 @@ public:
    * @return true on success
    */
   bool resetBTpassword();
+
+  /**
+   * @brief Reset the serial baud rate. The sensor reboots at the new rate on success
+   *
+   * @return true on success
+   */
+  bool setBaud(byte baud);
 };
 
 #endif // MY_LD2410_H

@@ -15,6 +15,7 @@ namespace LD2410
   const byte res[4]{2, 0, 0xAB, 0};
   const byte resCoarse[6]{4, 0, 0xAA, 0, 0, 0};
   const byte resFine[6]{4, 0, 0xAA, 0, 1, 0};
+  const byte changeBaud[6]{4, 0, 0xA1, 0, 7, 0};
   const byte reset[4]{2, 0, 0xA2, 0};
   const byte reboot[4]{2, 0, 0xA3, 0};
   const byte BTon[6]{4, 0, 0xA4, 0, 1, 0};
@@ -300,7 +301,7 @@ bool MyLD2410::presenceDetected()
 
 bool MyLD2410::stationaryTargetDetected()
 {
-  return isDataValid() && ((sData.status == 2) || (sData.status == 3));
+  return isDataValid() && (sData.status & 2);
 }
 
 unsigned long MyLD2410::stationaryTargetDistance()
@@ -320,7 +321,7 @@ const MyLD2410::ValuesArray &MyLD2410::getStationarySignals()
 
 bool MyLD2410::movingTargetDetected()
 {
-  return isDataValid() && ((sData.status == 1) || (sData.status == 3));
+  return isDataValid() && (sData.status & 1);
 }
 
 unsigned long MyLD2410::movingTargetDistance()
@@ -558,7 +559,7 @@ bool MyLD2410::requestReboot()
 {
   if (isConfig)
     return sendCommand(LD2410::reboot);
-  return false;
+  return configMode() && sendCommand(LD2410::reboot);
 }
 
 bool MyLD2410::requestBTon()
@@ -603,6 +604,18 @@ bool MyLD2410::resetBTpassword()
   if (isConfig)
     return sendCommand(LD2410::BTpasswd);
   return configMode() && sendCommand(LD2410::BTpasswd) && configMode(false);
+}
+
+bool MyLD2410::setBaud(byte baud)
+{
+  if ((baud < 1) || (baud > 8))
+    return false;
+  byte cmd[6];
+  memcpy(cmd, LD2410::changeBaud, 6);
+  cmd[4] = baud;
+  if (isConfig)
+    return sendCommand(cmd) && requestReboot();
+  return configMode() && sendCommand(cmd) && requestReboot();
 }
 
 byte MyLD2410::getResolution()
