@@ -206,7 +206,7 @@ bool MyLD2410::processData()
   if (((inBuf[0] == 1) || (inBuf[0] == 2)) && (inBuf[1] == 0xAA))
   { // Basic mode and Enhanced
     sData.timestamp = millis();
-    sData.status = inBuf[2];
+    sData.status = inBuf[2] & 3;
     sData.mTargetDistance = inBuf[3] | (inBuf[4] << 8);
     sData.mTargetSignal = inBuf[5];
     sData.sTargetDistance = inBuf[6] | (inBuf[7] << 8);
