@@ -28,10 +28,11 @@ HLK-LD2410<br>
 
 |  Board | Serial | RX pin | Tx pin |
 |--------|--------|:--:|:--:|
-| Adruino Nano 33 IoT | Serial1 | D1 | D0 |
 | ESP32 WROOM-32 | Serial1 | 16 | 17 |
 | Xiao-ESP32-c3 | Serial0 | D7 | D6 |
 | Xiao-ESP32-c6 | Serial0 | D7 | D6 |
+| Adruino Nano 33 IoT | Serial1 | D1 | D0 |
+| Adruino Pro-Micro (Leonardo) | Serial1 | D0 | D1 |
 
 * Create a global instance of the sensor object
 
@@ -58,7 +59,7 @@ if (!sensor.begin()) {
 * Use the many convenience functions to extract/modify the sensor data (see the examples below).
 
 ## Examples
-* Once the library is installed, navigate to: `File->Examples->MyLD2410` to play with the examples. They are automatically configured for some popular 3.3V boards (see the table above). For other boards, minor (trivial) modifications may be necessary.  
+* Once the library is installed, navigate to: `File->Examples->MyLD2410` to play with the examples. They are automatically configured for some popular boards (see the table above). For other boards, minor (trivial) modifications may be necessary.  
     
     1. `sensor_data` - retrieves all data frames from the sensor and outputs useful information every second. Handles both basic and enhanced (engineering) modes.
     

@@ -174,8 +174,8 @@ bool MyLD2410::processAck()
     break;
   case 0x161: // Query parameters
     maxRange = inBuf[5];
-    movingThresholds.N = inBuf[6];
-    stationaryThresholds.N = inBuf[7];
+    movingThresholds.setN(inBuf[6]);
+    stationaryThresholds.setN(inBuf[7]);
     for (byte i = 0; i <= movingThresholds.N; i++)
       movingThresholds.values[i] = inBuf[8 + i];
     for (byte i = 0; i <= stationaryThresholds.N; i++)
@@ -214,8 +214,8 @@ bool MyLD2410::processData()
     sData.distance = inBuf[9] | (inBuf[10] << 8);
     if (inBuf[0] == 1)
     { // Enhanced mode only
-      sData.mTargetSignals.N = inBuf[11];
-      sData.sTargetSignals.N = inBuf[12];
+      sData.mTargetSignals.setN(inBuf[11]);
+      sData.sTargetSignals.setN(inBuf[12]);
       for (byte i = 0; i <= sData.mTargetSignals.N; i++)
         sData.mTargetSignals.values[i] = inBuf[13 + i];
       for (byte i = 0; i <= sData.sTargetSignals.N; i++)
@@ -223,8 +223,8 @@ bool MyLD2410::processData()
     }
     else
     {
-      sData.mTargetSignals.N = 0;
-      sData.sTargetSignals.N = 0;
+      sData.mTargetSignals.setN(0);
+      sData.sTargetSignals.setN(0);
     }
   }
   else
@@ -512,6 +512,7 @@ bool MyLD2410::setGateParameters(const ValuesArray &moving_thresholds, const Val
         success = false;
         break;
       }
+      delay(20);
     }
   }
   return success && setMaxGate(moving_thresholds.N, stationary_thresholds.N, noOneWindow) && configMode(false);
@@ -534,6 +535,8 @@ bool MyLD2410::setMaxMovingGate(byte movingGate)
     return true;
   if (!noOne_window)
     noOne_window = 5;
+  if (movingGate > 8)
+    movingGate = 8;
   return setMaxGate(movingGate, stationaryThresholds.N, noOne_window);
 }
 
@@ -545,6 +548,8 @@ bool MyLD2410::setMaxStationaryGate(byte stationaryGate)
     return true;
   if (!noOne_window)
     noOne_window = 5;
+  if (stationaryGate > 8)
+    stationaryGate = 8;
   return setMaxGate(movingThresholds.N, stationaryGate, noOne_window);
 }
 

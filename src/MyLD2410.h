@@ -17,6 +17,11 @@ public:
   {
     byte values[9];
     byte N;
+
+    void setN(byte n)
+    {
+      N = (n <= 8) ? n : 8;
+    }
     ValuesArray &operator=(const ValuesArray &other)
     {
       if (this != &other)

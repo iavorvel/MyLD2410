@@ -2,8 +2,10 @@
   This program sets/resets the Bluetooth password of the HLK-LD2410
   presence sensor.
 
-  #define RESET_PASSWORD uncomment this line (line 40) to reset the
-  password to its default value "HiLink"
+  To set the BT password to "passwd", run the sketch as is
+  To reset the BT password to "HiLink", uncomment line 43 and run the sketch
+  (line 43) #define RESET_PASSWORD
+
   #define SERIAL_BAUD_RATE sets the serial monitor baud rate
 
   Communication with the sensor is handled by the
@@ -20,19 +22,20 @@
   Arduino/ESP32 GND -- GND LD2410
   Provide sufficient power to the sensor Vcc (200mA, 5-12V)
 */
-#if defined(ARDUINO_SAMD_NANO_33_IOT)
-// RX_PIN is D1, TX_PIN is D0
+#if defined(ARDUINO_SAMD_NANO_33_IOT) || defined(ARDUINO_AVR_LEONARDO)
+//ARDUINO_SAMD_NANO_33_IOT RX_PIN is D1, TX_PIN is D0 
+//ARDUINO_AVR_LEONARDO RX_PIN(RXI) is D0, TX_PIN(TXO) is D1 
 #define sensorSerial Serial1
 #elif defined(ARDUINO_XIAO_ESP32C3) || defined(ARDUINO_XIAO_ESP32C6)
-// RX_PIN is D7, TX_PIN is D6
+//RX_PIN is D7, TX_PIN is D6
 #define sensorSerial Serial0
 #elif defined(ESP32)
-// Other ESP32 device - choose available GPIO pins
+//Other ESP32 device - choose available GPIO pins
 #define sensorSerial Serial1
 #define RX_PIN 16
 #define TX_PIN 17
 #else
-#error "This sketch only works on ESP32 or Arduino Nano 33IoT"
+#error "This sketch only works on ESP32, Arduino Nano 33IoT, and Arduino Leonardo (Pro-Micro)"
 #endif
 
 // User defines
@@ -56,7 +59,7 @@ String NewPassword("passwd");
 
 void setup() {
   Serial.begin(SERIAL_BAUD_RATE);
-#if defined(ARDUINO_XIAO_ESP32C3) || defined(ARDUINO_XIAO_ESP32C6) || defined(ARDUINO_SAMD_NANO_33_IOT)
+#if defined(ARDUINO_XIAO_ESP32C3) || defined(ARDUINO_XIAO_ESP32C6) || defined(ARDUINO_SAMD_NANO_33_IOT) || defined(ARDUINO_AVR_LEONARDO)
   sensorSerial.begin(LD2410_BAUD_RATE);
 #else
   sensorSerial.begin(LD2410_BAUD_RATE, SERIAL_8N1, RX_PIN, TX_PIN);
