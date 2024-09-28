@@ -348,8 +348,8 @@ public:
   /**
    * @brief Set the gate parameters for a particular gate, or for all gates at once
    *
-   * @param gate the gate to configure (only 2 - 8 are configurable),
-   * pass 0 to apply the same thresholds to all gates
+   * @param gate the gate to configure;
+   * pass a value greater than 8 (e.g 0xFF) to apply the same thresholds to all gates
    * @param movingThreshold [0 - 100]
    * @param stationaryThreshold [0 - 100]
    * @return true on success

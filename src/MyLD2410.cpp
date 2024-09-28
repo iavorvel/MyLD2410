@@ -460,24 +460,25 @@ bool MyLD2410::requestParameters()
   return configMode() && sendCommand(LD2410::param) && configMode(false);
 }
 
-bool MyLD2410::setGateParameters(byte gate, byte movingThreshold, byte staticThreshold)
+bool MyLD2410::setGateParameters(byte gate, byte movingThreshold, byte stationaryThreshold)
 {
   if (movingThreshold > 100)
     movingThreshold = 100;
-  if (staticThreshold > 100)
-    staticThreshold = 100;
-  if ((gate == 1) || (gate > 8))
-    gate = 0; // 0 means all
+  if (stationaryThreshold > 100)
+    stationaryThreshold = 100;
   byte *cmd = LD2410::gateParam;
-  if (gate)
-    cmd[6] = gate;
-  else
+  if (gate > 8)
   {
     cmd[6] = 0xFF;
     cmd[7] = 0xFF;
   }
+  else
+  {
+    cmd[6] = gate;
+    cmd[7] = 0;
+  }
   cmd[12] = movingThreshold;
-  cmd[18] = staticThreshold;
+  cmd[18] = stationaryThreshold;
   if (isConfig && sendCommand(cmd))
     return sendCommand(LD2410::param);
   return configMode() && sendCommand(cmd) && sendCommand(LD2410::param) && configMode(false);
