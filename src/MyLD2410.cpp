@@ -219,7 +219,8 @@ bool MyLD2410::processData()
       for (byte i = 0; i <= sData.mTargetSignals.N; i++)
         sData.mTargetSignals.values[i] = inBuf[13 + i];
       for (byte i = 0; i <= sData.sTargetSignals.N; i++)
-        sData.sTargetSignals.values[i] = inBuf[24 + i];
+        sData.sTargetSignals.values[i] = inBuf[22 + i];
+      lightLevel = inBuf[31];
     }
     else
     {
@@ -639,4 +640,9 @@ byte MyLD2410::getResolution()
       return getResolution();
   }
   return 0;
+}
+
+byte MyLD2410::getLightLevel()
+{
+  return lightLevel;
 }

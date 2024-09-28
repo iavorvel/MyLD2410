@@ -99,6 +99,11 @@ void printData() {
     }
     Serial.println();
   }
+  byte lightLevel = sensor.getLightLevel();
+  if (lightLevel) {
+    Serial.print("Light level: ");
+    Serial.println(lightLevel);
+  }
   Serial.println();
 }
 
