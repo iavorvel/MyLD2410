@@ -80,8 +80,9 @@ void printData() {
     if (sensor.inEnhancedMode()) {
       Serial.print("\n signals->[");
       sensor.getMovingSignals().forEach(printValue);
-      Serial.print(" ] thresholds:");
+      Serial.print(" ] thresholds:[");
       sensor.getMovingThresholds().forEach(printValue);
+      Serial.print(" ]");
     }
     Serial.println();
   }
@@ -94,8 +95,9 @@ void printData() {
     if (sensor.inEnhancedMode()) {
       Serial.print("\n signals->[");
       sensor.getStationarySignals().forEach(printValue);
-      Serial.print(" ] thresholds:");
+      Serial.print(" ] thresholds:[");
       sensor.getStationaryThresholds().forEach(printValue);
+      Serial.print(" ]");
     }
     Serial.println();
   }
@@ -123,6 +125,8 @@ void setup() {
 
 #ifdef ENHANCED_MODE
   sensor.enhancedMode();
+#else
+  sensor.enhancedMode(false);
 #endif
 
   delay(nextPrint);

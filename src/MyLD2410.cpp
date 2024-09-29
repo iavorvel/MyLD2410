@@ -216,16 +216,18 @@ bool MyLD2410::processData()
     { // Enhanced mode only
       sData.mTargetSignals.setN(inBuf[11]);
       sData.sTargetSignals.setN(inBuf[12]);
+      byte *p = inBuf + 13;
       for (byte i = 0; i <= sData.mTargetSignals.N; i++)
-        sData.mTargetSignals.values[i] = inBuf[13 + i];
+        sData.mTargetSignals.values[i] = *(p++);
       for (byte i = 0; i <= sData.sTargetSignals.N; i++)
-        sData.sTargetSignals.values[i] = inBuf[22 + i];
-      lightLevel = inBuf[31];
+        sData.sTargetSignals.values[i] = *(p++);
+      lightLevel = (*p > 80) ? *p : 0;
     }
     else
-    {
+    { // Basic mode only
       sData.mTargetSignals.setN(0);
       sData.sTargetSignals.setN(0);
+      lightLevel = 0;
     }
   }
   else
