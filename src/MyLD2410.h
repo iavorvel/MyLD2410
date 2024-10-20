@@ -32,7 +32,8 @@ public:
       }
       return *this;
     }
-    void forEach(void (*func)(const byte &val)) const
+    template <typename ByteHandler>
+    void forEach(ByteHandler func) const
     {
       for (byte i = 0; i <= N; i++)
         func(values[i]);

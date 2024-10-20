@@ -29,6 +29,7 @@ HLK-LD2410<br>
 |  Board | Serial | RX pin | Tx pin |
 |--------|--------|:--:|:--:|
 | ESP32 WROOM-32 | Serial1 | 16 | 17 |
+| ESP32-S3 WROOM | Serial1 | 18 | 17 |
 | Xiao-ESP32-c3 | Serial0 | D7 | D6 |
 | Xiao-ESP32-c6 | Serial0 | D7 | D6 |
 | Adruino Nano 33 IoT | Serial1 | D1 | D0 |

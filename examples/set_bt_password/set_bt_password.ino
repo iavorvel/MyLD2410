@@ -32,8 +32,13 @@
 #elif defined(ESP32)
 //Other ESP32 device - choose available GPIO pins
 #define sensorSerial Serial1
+#if defined(ARDUINO_ESP32S3_DEV)
+#define RX_PIN 18
+#define TX_PIN 17
+#else
 #define RX_PIN 16
 #define TX_PIN 17
+#endif
 #else
 #error "This sketch only works on ESP32, Arduino Nano 33IoT, and Arduino Leonardo (Pro-Micro)"
 #endif
