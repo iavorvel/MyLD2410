@@ -1,13 +1,12 @@
 # MyLD2410 Arduino library
 ## Introduction
 
-This library covers the complete set of serial commands for the HLK-LD2410x presence sensor. 
-It has no external dependencies and will work on any Arduino and ESP32 board.
+This library covers the complete set of serial commands for the LD2410 presence sensor, including HLK-LD2410B and  HLK-LD2410C. It has no external dependencies and will work on any Arduino and ESP32 board.
 
 HLK-LD2410C<br>
 ![LD2410C](images/ld2410c.png)
 
-HLK-LD2410<br>
+HLK-LD2410B<br>
 ![LD2410B](images/ld2410.png)
 
 ## Installation
@@ -43,6 +42,7 @@ HLK-LD2410<br>
 
 ```
 sensorSerial.begin(LD2410_BAUD_RATE, SERIAL_8N1, RX_PIN, TX_PIN);
+
 if (!sensor.begin()) {
   Serial.println("Failed to communicate with the sensor");
   while (true);
@@ -60,7 +60,7 @@ if (!sensor.begin()) {
 * Use the many convenience functions to extract/modify the sensor data (see the examples below).
 
 ## Examples
-* Once the library is installed, navigate to: `File->Examples->MyLD2410` to play with the examples. They are automatically configured for some popular boards (see the table above). For other boards, minor (trivial) modifications may be necessary.  
+* Once the library is installed, navigate to: `File`&rarr;`Examples`&rarr;`MyLD2410` to play with the examples. They are automatically configured for some popular boards (see the table above). For other boards, minor (trivial) modifications may be necessary.  
     
     1. `sensor_data` - retrieves all data frames from the sensor and outputs useful information every second. Handles both basic and enhanced (engineering) modes.
     
@@ -79,3 +79,5 @@ if (!sensor.begin()) {
         - To restore the default password, uncomment the line `#define RESET_PASSWORD` and flash the sketch again.
 
     1. `set_baud_rate` - sets and tests a new baud rate for communication with the sensor. _Be careful not to get locked out of your sensor._
+
+## Have fun!

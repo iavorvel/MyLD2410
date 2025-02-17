@@ -104,10 +104,22 @@ public:
   void end();
 
   /**
+   * @brief Set the debug flag
+   *
+   */
+  void debugOn();
+
+  /**
+   * @brief Reset the debug flag
+   *
+   */
+  void debugOff();
+
+  /**
     @brief Call this function in the main loop
-    @return MyLD2410::DATA = (true) if the latest frame contained data
-    @return MyLD2410::ACK  = (true) if the latest frame contained a reply to a command
-    @return MyLD2410::FAIL = (false) if no useful info was processed
+    @return MyLD2410::DATA = (evaluates to true) if the latest frame contained data
+    @return MyLD2410::ACK  = (evaluates to true) if the latest frame contained a reply to a command
+    @return MyLD2410::FAIL = (evaluates to false) if no useful info was processed
     */
   Response check();
 

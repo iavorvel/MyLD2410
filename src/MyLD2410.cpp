@@ -267,6 +267,16 @@ void MyLD2410::end()
   isEnhanced = false;
 }
 
+void MyLD2410::debugOn()
+{
+  _debug = true;
+}
+
+void MyLD2410::debugOff()
+{
+  _debug = false;
+}
+
 bool MyLD2410::inConfigMode()
 {
   return isConfig;
