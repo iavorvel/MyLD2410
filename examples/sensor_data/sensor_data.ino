@@ -111,6 +111,8 @@ void printData() {
     Serial.print("Light level: ");
     Serial.println(lightLevel);
   }
+  Serial.print("Output level: ");
+  Serial.println((sensor.getOutLevel())?"HIGH":"LOW");
   Serial.println();
 }
 

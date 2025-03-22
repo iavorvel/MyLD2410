@@ -40,7 +40,7 @@ HLK-LD2410B<br>
 
 * In the `setup()` function, begin serial communication with baud rate `LD2420_BAUD_RATE` (256000). On ESP32-WROOM: RX_PIN(16), TX_PIN(17). Check the exact pin numbers for your board. Then call `sensor.begin()` to begin communication with the sensor.
 
-```
+```c++
 sensorSerial.begin(LD2410_BAUD_RATE, SERIAL_8N1, RX_PIN, TX_PIN);
 
 if (!sensor.begin()) {
@@ -63,8 +63,37 @@ if (!sensor.begin()) {
 * Once the library is installed, navigate to: `File`&rarr;`Examples`&rarr;`MyLD2410` to play with the examples. They are automatically configured for some popular boards (see the table above). For other boards, minor (trivial) modifications may be necessary.  
     
     1. `sensor_data` - retrieves all data frames from the sensor and outputs useful information every second. Handles both basic and enhanced (engineering) modes.
+
+        Sample output:
+        ```text
+        Both moving and stationary, distance: 0cm
+        MOVING    = 75@30cm
+        signals->[ 75 60 2 16 7 1 6 5 3 ] thresholds:[ 50 50 40 30 20 15 15 15 15 ]
+        STATIONARY= 100@30cm
+        signals->[ 0 0 100 86 33 18 13 10 6 ] thresholds:[ 0 0 40 40 30 30 20 20 20 ]
+        Light level: 90
+        Output level: HIGH
+        ```
+
+        ```text
+        No target
+        Light level: 90
+        Output level: LOW
+        ```
     
     1. `print_parameters`- prints the current device parameters.
+
+        Sample output:
+        ```text
+        Firmware: 2.04.23022511
+        Protocol version: 1
+        Bluetooth MAC address: 49:AF:7B:68:81:28
+        Resolution (gate-width): 75cm
+        Max range: 675cm
+        Moving thresholds    [0,8]: 50 50 40 30 20 15 15 15 15
+        Stationary thresholds[0,8]: 0 0 40 40 30 30 20 20 20
+        No-one window: 5s
+        ```
 
     1. `modify_parameters` - demonstrates how to modify various sensor parameters. At the end, the original state of the sensor is restored.
 

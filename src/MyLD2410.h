@@ -1,5 +1,14 @@
 #ifndef MY_LD2410_H
 #define MY_LD2410_H
+
+/*
+
+MyLD2410 library
+An Arduino library for the LD2410 presence sensor, including HLK-LD2410B and HLK-LD2410C.
+https://github.com/iavorvel/MyLD2410
+
+*/
+
 #include <Arduino.h>
 #define LD2410_BAUD_RATE 256000
 #define LD2410_BUFFER_SIZE 0x40
