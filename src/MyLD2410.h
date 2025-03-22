@@ -60,6 +60,7 @@ private:
   byte maxRange = 0;
   byte noOne_window = 0;
   byte lightLevel = 0;
+  byte outLevel = 0;
   unsigned long version = 0;
   unsigned long bufferSize = 0;
   byte MAC[6];
@@ -482,6 +483,14 @@ public:
    * @return byte
    */
   byte getLightLevel();
+
+  /**
+   * @brief Get the Light Level
+   *
+   * @return byte
+   */
+  byte getOutLevel();
+};
 };
 
 #endif // MY_LD2410_H

@@ -221,7 +221,8 @@ bool MyLD2410::processData()
         sData.mTargetSignals.values[i] = *(p++);
       for (byte i = 0; i <= sData.sTargetSignals.N; i++)
         sData.sTargetSignals.values[i] = *(p++);
-      lightLevel = (*p > 80) ? *p : 0;
+      lightLevel = (*p > 80) ? *(p++) : 0;
+      outLevel = *p;
     }
     else
     { // Basic mode only
@@ -657,4 +658,9 @@ byte MyLD2410::getResolution()
 byte MyLD2410::getLightLevel()
 {
   return lightLevel;
+}
+
+byte MyLD2410::getOutLevel()
+{
+  return outLevel;
 }
