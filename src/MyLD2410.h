@@ -491,6 +491,5 @@ public:
    */
   byte getOutLevel();
 };
-};
 
 #endif // MY_LD2410_H
