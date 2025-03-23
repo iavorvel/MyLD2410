@@ -19,6 +19,11 @@ HLK-LD2410B<br>
 
 1. Include the header file: `#include <MyLD2410.h>` in your sketch.
 
+## Documentation
+
+[MyLD2410 Documentation](https://iavorvel.github.io/site/MyLD2410/classMyLD2410.html)
+
+
 ## Usage
 * Decide which **hardware** serial stream you'll be using for communication. For 5V Arduino boards you must use a voltage divider (1:2 or 2:3) on the TX line to protect the RX pin of the sensor, which operates at 3.3V.  
 
