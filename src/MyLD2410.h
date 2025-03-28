@@ -62,6 +62,26 @@ public:
     ValuesArray mTargetSignals;
     ValuesArray sTargetSignals;
   };
+  enum class LightControl
+  {
+    NOT_SET = -1,
+    NO_LIGHT_CONTROL,
+    LIGHT_BELOW_THRESHOLD,
+    LIGHT_ABOVE_THRESHOLD
+  };
+  enum class OutputControl
+  {
+    NOT_SET = -1,
+    DEFAULT_LOW,
+    DEFAULT_HIGH,
+  };
+  enum class AutoStatus
+  {
+    NOT_SET = -1,
+    NOT_IN_PROGRESS,
+    IN_PROGRESS,
+    COMPLETED
+  };
 
 private:
   SensorData sData;
@@ -71,6 +91,10 @@ private:
   byte noOne_window = 0;
   byte lightLevel = 0;
   byte outLevel = 0;
+  byte lightThreshold = 0;
+  LightControl lightControl = LightControl::NOT_SET;
+  OutputControl outputControl = OutputControl::NOT_SET;
+  AutoStatus autoStatus = AutoStatus::NOT_SET;
   unsigned long version = 0;
   unsigned long bufferSize = 0;
   byte MAC[6];
@@ -334,6 +358,29 @@ public:
   bool enhancedMode(bool enable = true);
 
   /**
+   * @brief Request the current auxiliary configuration
+   *
+   * @return true on success
+   */
+  bool requestAuxConfig();
+
+  /**
+   * @brief Begin the automatic threshold detection routine
+   * (firmware >= 2.44)
+   *
+   * @return true on success
+   */
+  bool autoThresholds();
+
+  /**
+   * @brief Get the status of the automatic threshold detection routine
+   * (firmware >= 2.44)
+   *
+   * @return AutoStatus
+   */
+  AutoStatus getAutoStatus();
+
+  /**
    * @brief Request the Bluetooth MAC address
    *
    * @return true on success
@@ -493,6 +540,45 @@ public:
    * @return byte
    */
   byte getLightLevel();
+
+  /**
+   * @brief Get the Light Control parameter
+   *
+   * @return LightControl enum
+   */
+  LightControl getLightControl();
+
+  /**
+   * @brief Set the Auxiliary Control parameters
+   *
+   * @param light_control
+   * @param light_threshold
+   * @param output_control
+   *
+   * @return true on success
+   */
+  bool setAuxControl(MyLD2410::LightControl light_control, byte light_threshold, MyLD2410::OutputControl output_control);
+
+  /**
+   * @brief Reset the Auxiliary Control parameters to their default values
+   *
+   * @return true on success
+   */
+  bool resetAuxControl();
+
+  /**
+   * @brief Get the Light Threshold
+   *
+   * @return byte
+   */
+  byte getLightThreshold();
+
+  /**
+   * @brief Get the Output Control parameter
+   *
+   * @return OutputControl enum
+   */
+  OutputControl getOutputControl();
 
   /**
    * @brief Get the Light Level

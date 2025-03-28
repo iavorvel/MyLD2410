@@ -1,7 +1,9 @@
 # MyLD2410 Arduino Library
 ## Introduction
 
-This library covers the complete set of serial commands for the LD2410 presence sensor, including HLK-LD2410B and  HLK-LD2410C. It has no external dependencies and will work on any Arduino and ESP32 board.
+This library covers the complete set of serial commands for the LD2410 presence sensor, including HLK-LD2410B and  HLK-LD2410C. It has no external dependencies and will work on any Arduino and ESP32 board. 
+
+The latest firmware version 2.44 is supported, providing auxiliary illumination-based controls and automatic thresholds detection.
 
 HLK-LD2410C<br>
 ![LD2410C](images/ld2410c.png)
@@ -37,7 +39,7 @@ HLK-LD2410B<br>
 | Xiao-ESP32-c3 | Serial0 | D7 | D6 |
 | Xiao-ESP32-c6 | Serial0 | D7 | D6 |
 | Adruino Nano 33 IoT | Serial1 | D1 | D0 |
-| Adruino Pro-Micro (Leonardo) | Serial1 | D0 | D1 |
+| Adruino Pro-Micro (Leonardo, **5V!**) | Serial1 | D0 | D1 |
 
 * Create a global instance of the sensor object
 
@@ -71,18 +73,18 @@ if (!sensor.begin()) {
 
         Sample output:
         ```text
-        Both moving and stationary, distance: 0cm
-        MOVING    = 75@30cm
-        signals->[ 75 60 2 16 7 1 6 5 3 ] thresholds:[ 50 50 40 30 20 15 15 15 15 ]
-        STATIONARY= 100@30cm
-        signals->[ 0 0 100 86 33 18 13 10 6 ] thresholds:[ 0 0 40 40 30 30 20 20 20 ]
-        Light level: 90
+        Both moving and stationary, distance: 131cm
+        MOVING    = 100@30cm 
+        signals->[ 100 100 31 36 34 30 10 3 6 ] thresholds:[ 50 50 40 30 20 15 15 15 15 ]
+        STATIONARY= 100@263cm 
+        signals->[ 0 0 82 100 100 79 79 71 35 ] thresholds:[ 0 0 40 40 30 30 20 20 20 ]
+        Light level: 175
         Output level: HIGH
         ```
 
         ```text
         No target
-        Light level: 90
+        Light level: 163
         Output level: LOW
         ```
     
@@ -98,11 +100,16 @@ if (!sensor.begin()) {
         Moving thresholds    [0,8]: 50 50 40 30 20 15 15 15 15
         Stationary thresholds[0,8]: 0 0 40 40 30 30 20 20 20
         No-one window: 5s
+        Auxiliary Configuration: no light control
+        Default output level: LOW
+        Done!
         ```
+
+    1. `factory_reset` - restores the factory default values of the sensor parameters.
 
     1. `modify_parameters` - demonstrates how to modify various sensor parameters. At the end, the original state of the sensor is restored.
 
-    1. `factory_reset` - restores the factory default values of the sensor parameters.
+    1. `auto_thresholds` - automatically detect the thresholds for the particular environment. This feature was introduced in firmware **version 2.44**. 
 
     1. `set_bt_password` - sets a new Bluetooth password, or resets the password to its default value "HiLink". _Be careful not to get locked out of your sensor._ 
     

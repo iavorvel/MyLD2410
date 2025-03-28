@@ -59,6 +59,8 @@ void printValue(const byte &val) {
 }
 
 void printParameters(bool first = false) {
+  sensor.configMode();
+  sensor.requestParameters();
   if (first) {
     Serial.print("Firmware: ");
     Serial.println(sensor.getFirmware());
@@ -85,6 +87,8 @@ void printParameters(bool first = false) {
   Serial.print("\nNo-one window: ");
   Serial.print(sensor.getNoOneWindow());
   Serial.println('s');
+
+  sensor.configMode(false);
 }
 
 void setup() {

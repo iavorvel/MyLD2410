@@ -3,7 +3,14 @@
 /*** BEGIN LD2410 namespace ***/
 namespace LD2410
 {
-  const char *tStatus[4]{"No target", "Moving only", "Stationary only", "Both moving and stationary"};
+  const char *tStatus[7]{
+      "No target",
+      "Moving only",
+      "Stationary only",
+      "Both moving and stationary",
+      "Auto thresholds in progress",
+      "Auto thresholds successful",
+      "Auto thresholds failed"};
   const byte headData[4]{0xF4, 0xF3, 0xF2, 0xF1};
   const byte tailData[4]{0xF8, 0xF7, 0xF6, 0xF5};
   const byte headConfig[4]{0xFD, 0xFC, 0xFB, 0xFA};
@@ -24,6 +31,10 @@ namespace LD2410
   const byte param[4]{2, 0, 0x61, 0};
   const byte engOn[4]{2, 0, 0x62, 0};
   const byte engOff[4]{2, 0, 0x63, 0};
+  const byte auxQuery[4]{2, 0, 0xAE, 0};
+  const byte auxConfig[8]{6, 0, 0xAD, 0, 0, 0x80, 0, 0};
+  const byte autoBegin[6]{4, 0, 0x0B, 0, 0x0A, 0};
+  const byte autoQuery[4]{2, 0, 0x1B, 0};
   byte gateParam[0x16]{0x14, 0, 0x64, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0};
   byte maxGate[0x16]{0x14, 0, 0x60, 0, 0, 0, 8, 0, 0, 0, 1, 0, 8, 0, 0, 0, 2, 0, 5, 0, 0, 0};
 
@@ -167,6 +178,14 @@ bool MyLD2410::processAck()
     break;
   case 0x1AB: // Query Resolution
     fineRes = (inBuf[4]);
+    break;
+  case 0x1AE: // Query auxiliary control parameters
+    lightControl = LightControl(inBuf[4]);
+    lightThreshold = inBuf[5];
+    outputControl = OutputControl(inBuf[6]);
+    break;
+  case 0x11B:
+    autoStatus = AutoStatus(inBuf[4]);
     break;
   case 0x1A3: // Reboot
     isEnhanced = false;
@@ -381,6 +400,11 @@ String MyLD2410::getFirmware()
 
 unsigned long MyLD2410::getVersion()
 {
+  if (version == 0)
+  {
+    configMode();
+    configMode(false);
+  }
   return version;
 }
 
@@ -437,6 +461,32 @@ bool MyLD2410::enhancedMode(bool enable)
     return sendCommand(((enable) ? LD2410::engOn : LD2410::engOff));
   else
     return configMode() && sendCommand(((enable) ? LD2410::engOn : LD2410::engOff)) && configMode(false);
+}
+
+bool MyLD2410::requestAuxConfig()
+{
+  if (isConfig)
+    return sendCommand(LD2410::auxQuery);
+  return configMode() && sendCommand(LD2410::auxQuery) && configMode(false);
+}
+
+bool MyLD2410::autoThresholds()
+{
+  if (isConfig)
+    return sendCommand(LD2410::autoBegin);
+  return configMode() && sendCommand(LD2410::autoBegin) && configMode(false);
+}
+
+MyLD2410::AutoStatus MyLD2410::getAutoStatus()
+{
+  bool res = false;
+  if (isConfig)
+    res = sendCommand(LD2410::autoQuery);
+  else
+    res = configMode() && sendCommand(LD2410::autoQuery) && configMode(false);
+  if (res)
+    return autoStatus;
+  return AutoStatus::NOT_SET;
 }
 
 bool MyLD2410::requestMAC()
@@ -513,7 +563,10 @@ bool MyLD2410::setMaxGate(byte movingGate, byte staticGate, byte noOneWindow)
   return configMode() && sendCommand(cmd) && sendCommand(LD2410::param) && configMode(false);
 }
 
-bool MyLD2410::setGateParameters(const ValuesArray &moving_thresholds, const ValuesArray &stationary_thresholds, byte noOneWindow)
+bool MyLD2410::setGateParameters(
+    const ValuesArray &moving_thresholds,
+    const ValuesArray &stationary_thresholds,
+    byte noOneWindow)
 {
   if (!isConfig)
     configMode();
@@ -658,6 +711,49 @@ byte MyLD2410::getResolution()
 byte MyLD2410::getLightLevel()
 {
   return lightLevel;
+}
+
+MyLD2410::LightControl MyLD2410::getLightControl()
+{
+  if (lightControl == LightControl::NOT_SET)
+    requestAuxConfig();
+  return lightControl;
+}
+
+byte MyLD2410::getLightThreshold()
+{
+  if (lightControl == LightControl::NOT_SET)
+    requestAuxConfig();
+  return lightThreshold;
+}
+
+MyLD2410::OutputControl MyLD2410::getOutputControl()
+{
+  if (outputControl == OutputControl::NOT_SET)
+    requestAuxConfig();
+  return outputControl;
+}
+
+bool MyLD2410::setAuxControl(
+    MyLD2410::LightControl light_control,
+    byte light_threshold,
+    MyLD2410::OutputControl output_control)
+{
+  byte cmd[8];
+  memcpy(cmd, LD2410::auxConfig, 8);
+  cmd[4] = byte(light_control);
+  cmd[5] = light_threshold;
+  cmd[6] = byte(output_control);
+  if (isConfig)
+    return sendCommand(cmd) && requestAuxConfig();
+  return configMode() && sendCommand(cmd) && requestAuxConfig() && configMode(false);
+}
+
+bool MyLD2410::resetAuxControl()
+{
+  if (isConfig)
+    return sendCommand(LD2410::auxConfig) && requestAuxConfig();
+  return configMode() && sendCommand(LD2410::auxConfig) && requestAuxConfig() && configMode(false);
 }
 
 byte MyLD2410::getOutLevel()

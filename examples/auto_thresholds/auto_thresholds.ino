@@ -1,11 +1,11 @@
 /*
-  This program prints the current setup parameters
-  of the HLK-LD2410 presence sensor.
+  This program utilizes the background noise detection that
+  was introduced in firmware 2.44 for the HLK-LD2410 presence sensor.
 
   #define SERIAL_BAUD_RATE sets the serial monitor baud rate
 
   Communication with the sensor is handled by the 
-  "MyLD2410" library Copyright (c) Iavor Veltchev 2024
+  "MyLD2410" library Copyright (c) Iavor Veltchev 2025
 
   Use only hardware UART at the default baud rate 256000,
   or change the #define LD2410_BAUD_RATE to match your sensor.
@@ -20,8 +20,8 @@
 */
 
 #if defined(ARDUINO_SAMD_NANO_33_IOT) || defined(ARDUINO_AVR_LEONARDO)
-//ARDUINO_SAMD_NANO_33_IOT RX_PIN is D1, TX_PIN is D0 
-//ARDUINO_AVR_LEONARDO RX_PIN(RXI) is D0, TX_PIN(TXO) is D1 
+//ARDUINO_SAMD_NANO_33_IOT RX_PIN is D1, TX_PIN is D0
+//ARDUINO_AVR_LEONARDO RX_PIN(RXI) is D0, TX_PIN(TXO) is D1
 #define sensorSerial Serial1
 #elif defined(ARDUINO_XIAO_ESP32C3) || defined(ARDUINO_XIAO_ESP32C6)
 //RX_PIN is D7, TX_PIN is D6
@@ -139,10 +139,40 @@ void setup() {
     while (true) {}
   }
 
+  Serial.println("Initial sensor parameters\n-------------------------");
   printParameters();
-
-  delay(2000);
-  Serial.println("Done!");
+  if (sensor.autoThresholds()) {
+    Serial.println("\n************\nYOU HAVE 10 SECONDS TO LEAVE THE ROOM!!!\n************");
+    delay(10000);
+    Serial.print("In progress ");
+    while (true) {
+      switch (sensor.getAutoStatus()) {
+        case MyLD2410::AutoStatus::IN_PROGRESS:
+          Serial.print('.');
+          delay(2000);
+          break;
+        case MyLD2410::AutoStatus::COMPLETED:
+          Serial.println("\nSUCCESS!!!");
+          Serial.println("Final sensor parameters\n-----------------------");
+          printParameters();
+          return;
+        case MyLD2410::AutoStatus::NOT_IN_PROGRESS:
+          Serial.println("\nStopped. Motion detected?");
+          printParameters();
+          Serial.print("Performing factory reset... ");
+          delay(2000);
+          if (sensor.requestReset()) Serial.println("Done!");
+          else Serial.println("Fail...");
+          printParameters();
+          return;
+        default:
+          break;
+      }
+    }
+  } else {
+    Serial.println("Automatic threshold configuration failed...");
+    Serial.println("Is the firmware < 2.44?");
+  }
 }
 
 void loop() {

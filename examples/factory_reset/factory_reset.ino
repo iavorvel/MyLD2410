@@ -55,8 +55,15 @@ void printValue(const byte &val) {
 }
 
 void printParameters() {
+  sensor.configMode();
+  sensor.requestParameters();
   Serial.print("Firmware: ");
-  Serial.println(sensor.getFirmware());
+  String fw(sensor.getFirmware());
+  Serial.println(fw);
+  if (!fw.startsWith(LD2410_LATEST_FIRMWARE)) {
+    Serial.print("To get the lastest features, upgrade your firmware to ");
+    Serial.println(LD2410_LATEST_FIRMWARE);
+  }
   Serial.print("Protocol version: ");
   Serial.println(sensor.getVersion());
   Serial.print("Bluetooth MAC address: ");
@@ -65,19 +72,57 @@ void printParameters() {
   const MyLD2410::ValuesArray &mThr = sensor.getMovingThresholds();
   const MyLD2410::ValuesArray &sThr = sensor.getStationaryThresholds();
 
-  Serial.print("Max range: ");
+  Serial.print("Resolution (gate-width): ");
+  Serial.print(sensor.getResolution());
+  Serial.print("cm\nMax range: ");
   Serial.print(sensor.getRange_cm());
   Serial.print("cm\nMoving thresholds    [0,");
   Serial.print(mThr.N);
   Serial.print("]:");
+  //Print using global function
   mThr.forEach(printValue);
   Serial.print("\nStationary thresholds[0,");
   Serial.print(sThr.N);
   Serial.print("]:");
-  sThr.forEach(printValue);
+  //Print using lambda
+  sThr.forEach([](const byte &val) {
+    Serial.print(' ');
+    Serial.print(val);
+  });
   Serial.print("\nNo-one window: ");
   Serial.print(sensor.getNoOneWindow());
   Serial.println('s');
+
+  //For firmware >= 2.44
+  if (sensor.requestAuxConfig()) {
+    Serial.print("Auxiliary Configuration: ");
+    switch (sensor.getLightControl()) {
+      case MyLD2410::LightControl::NO_LIGHT_CONTROL:
+        Serial.println("no light control");
+        break;
+      case MyLD2410::LightControl::LIGHT_BELOW_THRESHOLD:
+        Serial.println("active when light is below the threshold of ");
+        Serial.println(sensor.getLightThreshold());
+        break;
+      case MyLD2410::LightControl::LIGHT_ABOVE_THRESHOLD:
+        Serial.println("active when light is above the threshold of ");
+        Serial.println(sensor.getLightThreshold());
+        break;
+      default:
+        break;
+    }
+    switch (sensor.getOutputControl()) {
+      case MyLD2410::OutputControl::DEFAULT_LOW:
+        Serial.println("Default output level: LOW");
+        break;
+      case MyLD2410::OutputControl::DEFAULT_HIGH:
+        Serial.println("Default output level: HIGH");
+        break;
+      default:
+        break;
+    }
+  }
+  sensor.configMode(false);
 }
 
 void setup() {
@@ -97,10 +142,10 @@ void setup() {
   printParameters();
 
   delay(2000);
-  Serial.println("Executing factory reset!");
+  Serial.print("Executing factory reset... ");
   if (sensor.requestReset()) {
-    printParameters();
     Serial.println("Done!");
+    printParameters();
   } else Serial.println("Fail");
 
 }
