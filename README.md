@@ -1,4 +1,4 @@
-# MyLD2410 Arduino library
+# MyLD2410 Arduino Library
 ## Introduction
 
 This library covers the complete set of serial commands for the LD2410 presence sensor, including HLK-LD2410B and  HLK-LD2410C. It has no external dependencies and will work on any Arduino and ESP32 board.
