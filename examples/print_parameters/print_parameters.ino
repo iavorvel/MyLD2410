@@ -56,7 +56,12 @@ void printValue(const byte &val) {
 
 void printParameters() {
   Serial.print("Firmware: ");
-  Serial.println(sensor.getFirmware());
+  String fw(sensor.getFirmware());
+  Serial.println(fw);
+  if (!fw.startsWith(LD2410_LATEST_FIRMWARE)) {
+    Serial.print("To get the lastest features, upgrade your firmware to ");
+    Serial.println(LD2410_LATEST_FIRMWARE);
+  }
   Serial.print("Protocol version: ");
   Serial.println(sensor.getVersion());
   Serial.print("Bluetooth MAC address: ");

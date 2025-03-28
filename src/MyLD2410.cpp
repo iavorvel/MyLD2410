@@ -221,7 +221,7 @@ bool MyLD2410::processData()
         sData.mTargetSignals.values[i] = *(p++);
       for (byte i = 0; i <= sData.sTargetSignals.N; i++)
         sData.sTargetSignals.values[i] = *(p++);
-      lightLevel = (*p > 80) ? *(p++) : 0;
+      lightLevel = *(p++);
       outLevel = *p;
     }
     else

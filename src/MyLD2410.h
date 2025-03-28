@@ -12,6 +12,7 @@ https://github.com/iavorvel/MyLD2410
 #include <Arduino.h>
 #define LD2410_BAUD_RATE 256000
 #define LD2410_BUFFER_SIZE 0x40
+#define LD2410_LATEST_FIRMWARE "2.44"
 
 class MyLD2410
 {

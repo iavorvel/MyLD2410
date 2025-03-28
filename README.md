@@ -86,11 +86,11 @@ if (!sensor.begin()) {
         Output level: LOW
         ```
     
-    1. `print_parameters`- prints the current device parameters.
+    1. `print_parameters`- prints the current device parameters. Note your firmware version and upgrade it using the Bluetooth app to get the latest features.
 
         Sample output:
         ```text
-        Firmware: 2.04.23022511
+        Firmware: 2.44.24073110
         Protocol version: 1
         Bluetooth MAC address: 49:AF:7B:68:81:28
         Resolution (gate-width): 75cm
