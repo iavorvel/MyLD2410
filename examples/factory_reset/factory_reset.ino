@@ -97,14 +97,14 @@ void printParameters() {
   if (sensor.requestAuxConfig()) {
     Serial.print("Auxiliary Configuration: ");
     switch (sensor.getLightControl()) {
-      case MyLD2410::LightControl::NO_LIGHT_CONTROL:
+      case LightControl::NO_LIGHT_CONTROL:
         Serial.println("no light control");
         break;
-      case MyLD2410::LightControl::LIGHT_BELOW_THRESHOLD:
+      case LightControl::LIGHT_BELOW_THRESHOLD:
         Serial.println("active when light is below the threshold of ");
         Serial.println(sensor.getLightThreshold());
         break;
-      case MyLD2410::LightControl::LIGHT_ABOVE_THRESHOLD:
+      case LightControl::LIGHT_ABOVE_THRESHOLD:
         Serial.println("active when light is above the threshold of ");
         Serial.println(sensor.getLightThreshold());
         break;
@@ -112,10 +112,10 @@ void printParameters() {
         break;
     }
     switch (sensor.getOutputControl()) {
-      case MyLD2410::OutputControl::DEFAULT_LOW:
+      case OutputControl::DEFAULT_LOW:
         Serial.println("Default output level: LOW");
         break;
-      case MyLD2410::OutputControl::DEFAULT_HIGH:
+      case OutputControl::DEFAULT_HIGH:
         Serial.println("Default output level: HIGH");
         break;
       default:

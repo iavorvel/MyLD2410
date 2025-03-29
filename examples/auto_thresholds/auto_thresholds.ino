@@ -1,5 +1,5 @@
 /*
-  This program utilizes the background noise detection that
+  This program utilizes the automatic thresholds detection that
   was introduced in firmware 2.44 for the HLK-LD2410 presence sensor.
 
   #define SERIAL_BAUD_RATE sets the serial monitor baud rate
@@ -97,14 +97,14 @@ void printParameters() {
   if (sensor.requestAuxConfig()) {
     Serial.print("Auxiliary Configuration: ");
     switch (sensor.getLightControl()) {
-      case MyLD2410::LightControl::NO_LIGHT_CONTROL:
+      case LightControl::NO_LIGHT_CONTROL:
         Serial.println("no light control");
         break;
-      case MyLD2410::LightControl::LIGHT_BELOW_THRESHOLD:
+      case LightControl::LIGHT_BELOW_THRESHOLD:
         Serial.println("active when light is below the threshold of ");
         Serial.println(sensor.getLightThreshold());
         break;
-      case MyLD2410::LightControl::LIGHT_ABOVE_THRESHOLD:
+      case LightControl::LIGHT_ABOVE_THRESHOLD:
         Serial.println("active when light is above the threshold of ");
         Serial.println(sensor.getLightThreshold());
         break;
@@ -112,10 +112,10 @@ void printParameters() {
         break;
     }
     switch (sensor.getOutputControl()) {
-      case MyLD2410::OutputControl::DEFAULT_LOW:
+      case OutputControl::DEFAULT_LOW:
         Serial.println("Default output level: LOW");
         break;
-      case MyLD2410::OutputControl::DEFAULT_HIGH:
+      case OutputControl::DEFAULT_HIGH:
         Serial.println("Default output level: HIGH");
         break;
       default:
@@ -147,16 +147,17 @@ void setup() {
     Serial.print("In progress ");
     while (true) {
       switch (sensor.getAutoStatus()) {
-        case MyLD2410::AutoStatus::IN_PROGRESS:
+        case AutoStatus::IN_PROGRESS:
           Serial.print('.');
           delay(2000);
           break;
-        case MyLD2410::AutoStatus::COMPLETED:
+        case AutoStatus::COMPLETED:
           Serial.println("\nSUCCESS!!!");
           Serial.println("Final sensor parameters\n-----------------------");
           printParameters();
+          Serial.println("Done!");
           return;
-        case MyLD2410::AutoStatus::NOT_IN_PROGRESS:
+        case AutoStatus::NOT_IN_PROGRESS:
           Serial.println("\nStopped. Motion detected?");
           printParameters();
           Serial.print("Performing factory reset... ");
@@ -164,14 +165,18 @@ void setup() {
           if (sensor.requestReset()) Serial.println("Done!");
           else Serial.println("Fail...");
           printParameters();
+          Serial.println("Bye");
           return;
         default:
           break;
       }
     }
   } else {
-    Serial.println("Automatic threshold configuration failed...");
+    Serial.println("Automatic thresholds configuration failed...");
     Serial.println("Is the firmware < 2.44?");
+    sensor.requestReboot();
+    printParameters();
+    Serial.println("Bye");
   }
 }
 

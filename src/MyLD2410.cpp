@@ -175,6 +175,8 @@ bool MyLD2410::processAck()
     firmware += LD2410::byte2hex(inBuf[10]);
     firmware += LD2410::byte2hex(inBuf[9]);
     firmware += LD2410::byte2hex(inBuf[8]);
+    firmwareMajor = inBuf[7];
+    firmwareMinor = inBuf[6];
     break;
   case 0x1AB: // Query Resolution
     fineRes = (inBuf[4]);
@@ -398,6 +400,20 @@ String MyLD2410::getFirmware()
   return firmware;
 }
 
+byte MyLD2410::getFirmwareMajor()
+{
+  if (!firmwareMajor)
+    requestFirmware();
+  return firmwareMajor;
+}
+
+byte MyLD2410::getFirmwareMinor()
+{
+  if (!firmwareMajor)
+    requestFirmware();
+  return firmwareMinor;
+}
+
 unsigned long MyLD2410::getVersion()
 {
   if (version == 0)
@@ -477,7 +493,7 @@ bool MyLD2410::autoThresholds()
   return configMode() && sendCommand(LD2410::autoBegin) && configMode(false);
 }
 
-MyLD2410::AutoStatus MyLD2410::getAutoStatus()
+AutoStatus MyLD2410::getAutoStatus()
 {
   bool res = false;
   if (isConfig)
@@ -713,7 +729,7 @@ byte MyLD2410::getLightLevel()
   return lightLevel;
 }
 
-MyLD2410::LightControl MyLD2410::getLightControl()
+LightControl MyLD2410::getLightControl()
 {
   if (lightControl == LightControl::NOT_SET)
     requestAuxConfig();
@@ -727,7 +743,7 @@ byte MyLD2410::getLightThreshold()
   return lightThreshold;
 }
 
-MyLD2410::OutputControl MyLD2410::getOutputControl()
+OutputControl MyLD2410::getOutputControl()
 {
   if (outputControl == OutputControl::NOT_SET)
     requestAuxConfig();
@@ -735,9 +751,9 @@ MyLD2410::OutputControl MyLD2410::getOutputControl()
 }
 
 bool MyLD2410::setAuxControl(
-    MyLD2410::LightControl light_control,
+    LightControl light_control,
     byte light_threshold,
-    MyLD2410::OutputControl output_control)
+    OutputControl output_control)
 {
   byte cmd[8];
   memcpy(cmd, LD2410::auxConfig, 8);

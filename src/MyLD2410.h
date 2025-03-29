@@ -9,10 +9,46 @@ https://github.com/iavorvel/MyLD2410
 
 */
 
+/**
+ * @file MyLD2410.h
+ */
+
 #include <Arduino.h>
 #define LD2410_BAUD_RATE 256000
 #define LD2410_BUFFER_SIZE 0x40
 #define LD2410_LATEST_FIRMWARE "2.44"
+
+/**
+ * @brief The auxiliary light control status
+ */
+enum class LightControl
+{
+  NOT_SET = -1,
+  NO_LIGHT_CONTROL,
+  LIGHT_BELOW_THRESHOLD,
+  LIGHT_ABOVE_THRESHOLD
+};
+
+/**
+ * @brief The auxiliary output control status
+ */
+enum class OutputControl
+{
+  NOT_SET = -1,
+  DEFAULT_LOW,
+  DEFAULT_HIGH,
+};
+
+/**
+ * @brief The status of the auto-thresholds routine
+ */
+enum class AutoStatus
+{
+  NOT_SET = -1,
+  NOT_IN_PROGRESS,
+  IN_PROGRESS,
+  COMPLETED
+};
 
 class MyLD2410
 {
@@ -62,26 +98,6 @@ public:
     ValuesArray mTargetSignals;
     ValuesArray sTargetSignals;
   };
-  enum class LightControl
-  {
-    NOT_SET = -1,
-    NO_LIGHT_CONTROL,
-    LIGHT_BELOW_THRESHOLD,
-    LIGHT_ABOVE_THRESHOLD
-  };
-  enum class OutputControl
-  {
-    NOT_SET = -1,
-    DEFAULT_LOW,
-    DEFAULT_HIGH,
-  };
-  enum class AutoStatus
-  {
-    NOT_SET = -1,
-    NOT_IN_PROGRESS,
-    IN_PROGRESS,
-    COMPLETED
-  };
 
 private:
   SensorData sData;
@@ -100,6 +116,8 @@ private:
   byte MAC[6];
   String MACstr = "";
   String firmware = "";
+  byte firmwareMajor = 0;
+  byte firmwareMinor = 0;
   int fineRes = -1;
   bool isEnhanced = false;
   bool isConfig = false;
@@ -255,6 +273,11 @@ public:
    */
   const ValuesArray &getMovingSignals();
 
+  /**
+   * @brief Get the detected distance
+   *
+   * @return unsigned long - distance in [cm]
+   */
   unsigned long detectedDistance();
 
   /**
@@ -277,6 +300,20 @@ public:
    * @return String
    */
   String getFirmware();
+
+  /**
+   *  @brief Get the Firmware Major
+   *
+   *  @return byte
+   */
+  byte getFirmwareMajor();
+
+  /**
+   *  @brief Get the Firmware Minor
+   *
+   *  @return byte
+   */
+  byte getFirmwareMinor();
 
   /**
    * @brief Get the protocol version
@@ -557,7 +594,7 @@ public:
    *
    * @return true on success
    */
-  bool setAuxControl(MyLD2410::LightControl light_control, byte light_threshold, MyLD2410::OutputControl output_control);
+  bool setAuxControl(LightControl light_control, byte light_threshold, OutputControl output_control);
 
   /**
    * @brief Reset the Auxiliary Control parameters to their default values

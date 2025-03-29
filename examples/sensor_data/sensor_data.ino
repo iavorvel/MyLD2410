@@ -26,8 +26,8 @@
   Provide sufficient power to the sensor Vcc (200mA, 5-12V) 
 */
 #if defined(ARDUINO_SAMD_NANO_33_IOT) || defined(ARDUINO_AVR_LEONARDO)
-//ARDUINO_SAMD_NANO_33_IOT RX_PIN is D1, TX_PIN is D0 
-//ARDUINO_AVR_LEONARDO RX_PIN(RXI) is D0, TX_PIN(TXO) is D1 
+//ARDUINO_SAMD_NANO_33_IOT RX_PIN is D1, TX_PIN is D0
+//ARDUINO_AVR_LEONARDO RX_PIN(RXI) is D0, TX_PIN(TXO) is D1
 #define sensorSerial Serial1
 #elif defined(ARDUINO_XIAO_ESP32C3) || defined(ARDUINO_XIAO_ESP32C6)
 //RX_PIN is D7, TX_PIN is D6
@@ -106,13 +106,14 @@ void printData() {
     }
     Serial.println();
   }
-  byte lightLevel = sensor.getLightLevel();
-  if (lightLevel) {
+
+  if (sensor.getFirmwareMajor() > 1) { 
     Serial.print("Light level: ");
-    Serial.println(lightLevel);
+    Serial.println(sensor.getLightLevel());
+    Serial.print("Output level: ");
+    Serial.println((sensor.getOutLevel()) ? "HIGH" : "LOW");
   }
-  Serial.print("Output level: ");
-  Serial.println((sensor.getOutLevel())?"HIGH":"LOW");
+
   Serial.println();
 }
 
