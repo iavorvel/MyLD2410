@@ -202,6 +202,9 @@ public:
    * 1 - Moving only;
    * 2 - Stationary only;
    * 3 - Both moving and stationary;
+   * 4 - Auto thresholds in progress;
+   * 5 - Auto thresholds successful;
+   * 6 - Auto thresholds failed;
    * 255 - The sensor status is invalid
    *
    * @return byte
@@ -211,8 +214,14 @@ public:
   /**
    * @brief Get the presence status as a c-string
    *
-   * @return const char* ["No target", "Moving only",
-   * "Stationary only", "Both moving and stationary"]
+   * @return const char* :
+   * "No target",
+   * "Moving only",
+   * "Stationary only",
+   * "Both moving and stationary",
+   * "Auto thresholds in progress",
+   * "Auto thresholds successful",
+   * "Auto thresholds failed".
    */
   const char *statusString();
 
@@ -405,9 +414,10 @@ public:
    * @brief Begin the automatic threshold detection routine
    * (firmware >= 2.44)
    *
+   * @param _timeout - allow for timeout [s] to leave the room 
    * @return true on success
-   */
-  bool autoThresholds();
+   */ 
+  bool autoThresholds(byte _timeout = 10);
 
   /**
    * @brief Get the status of the automatic threshold detection routine

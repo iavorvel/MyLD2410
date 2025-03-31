@@ -227,7 +227,7 @@ bool MyLD2410::processData()
   if (((inBuf[0] == 1) || (inBuf[0] == 2)) && (inBuf[1] == 0xAA))
   { // Basic mode and Enhanced
     sData.timestamp = millis();
-    sData.status = inBuf[2] & 3;
+    sData.status = inBuf[2] & 7;
     sData.mTargetDistance = inBuf[3] | (inBuf[4] << 8);
     sData.mTargetSignal = inBuf[5];
     sData.sTargetDistance = inBuf[6] | (inBuf[7] << 8);
@@ -331,12 +331,12 @@ bool MyLD2410::isDataValid()
 
 bool MyLD2410::presenceDetected()
 {
-  return isDataValid() && (sData.status);
+  return isDataValid() && (sData.status) && (sData.status < 4); // 1,2,3
 }
 
 bool MyLD2410::stationaryTargetDetected()
 {
-  return isDataValid() && (sData.status & 2);
+  return isDataValid() && ((sData.status == 2) || (sData.status == 3)); // 2,3
 }
 
 unsigned long MyLD2410::stationaryTargetDistance()
@@ -356,7 +356,7 @@ const MyLD2410::ValuesArray &MyLD2410::getStationarySignals()
 
 bool MyLD2410::movingTargetDetected()
 {
-  return isDataValid() && (sData.status & 1);
+  return isDataValid() && ((sData.status == 1) || (sData.status == 3)); // 1,3
 }
 
 unsigned long MyLD2410::movingTargetDistance()
@@ -486,11 +486,15 @@ bool MyLD2410::requestAuxConfig()
   return configMode() && sendCommand(LD2410::auxQuery) && configMode(false);
 }
 
-bool MyLD2410::autoThresholds()
+bool MyLD2410::autoThresholds(byte _timeout)
 {
+  byte cmd[6];
+  memcpy(cmd, LD2410::autoBegin, 6);
+  if (_timeout)
+    cmd[4] = _timeout;
   if (isConfig)
-    return sendCommand(LD2410::autoBegin);
-  return configMode() && sendCommand(LD2410::autoBegin) && configMode(false);
+    return sendCommand(cmd);
+  return configMode() && sendCommand(cmd) && configMode(false);
 }
 
 AutoStatus MyLD2410::getAutoStatus()
@@ -640,8 +644,8 @@ bool MyLD2410::setMaxStationaryGate(byte stationaryGate)
 bool MyLD2410::requestReset()
 {
   if (isConfig)
-    return sendCommand(LD2410::reset) && sendCommand(LD2410::param);
-  return configMode() && sendCommand(LD2410::reset) && sendCommand(LD2410::param) && configMode(false);
+    return sendCommand(LD2410::reset) && sendCommand(LD2410::param) && sendCommand(LD2410::res);
+  return configMode() && sendCommand(LD2410::reset) && sendCommand(LD2410::param) && sendCommand(LD2410::res) && configMode(false);
 }
 
 bool MyLD2410::requestReboot()
