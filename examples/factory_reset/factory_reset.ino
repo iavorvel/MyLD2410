@@ -20,8 +20,8 @@
 */
 
 #if defined(ARDUINO_SAMD_NANO_33_IOT) || defined(ARDUINO_AVR_LEONARDO)
-//ARDUINO_SAMD_NANO_33_IOT RX_PIN is D1, TX_PIN is D0 
-//ARDUINO_AVR_LEONARDO RX_PIN(RXI) is D0, TX_PIN(TXO) is D1 
+//ARDUINO_SAMD_NANO_33_IOT RX_PIN is D1, TX_PIN is D0
+//ARDUINO_AVR_LEONARDO RX_PIN(RXI) is D0, TX_PIN(TXO) is D1
 #define sensorSerial Serial1
 #elif defined(ARDUINO_XIAO_ESP32C3) || defined(ARDUINO_XIAO_ESP32C6)
 //RX_PIN is D7, TX_PIN is D6
@@ -143,11 +143,10 @@ void setup() {
 
   delay(2000);
   Serial.print("Executing factory reset... ");
-  if (sensor.requestReset()) {
+  if (sensor.setGateParameters(0, 0, 0) && sensor.setGateParameters(1, 0, 0) && sensor.requestReset()) {
     Serial.println("Done!");
     printParameters();
   } else Serial.println("Fail");
-
 }
 
 void loop() {

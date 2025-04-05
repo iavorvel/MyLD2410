@@ -107,7 +107,7 @@ void printData() {
     Serial.println();
   }
 
-  if (sensor.getFirmwareMajor() > 1) { 
+  if (sensor.inEnhancedMode() && (sensor.getFirmwareMajor() > 1)) { 
     Serial.print("Light level: ");
     Serial.println(sensor.getLightLevel());
     Serial.print("Output level: ");

@@ -235,6 +235,7 @@ bool MyLD2410::processData()
     sData.distance = inBuf[9] | (inBuf[10] << 8);
     if (inBuf[0] == 1)
     { // Enhanced mode only
+      isEnhanced = true;
       sData.mTargetSignals.setN(inBuf[11]);
       sData.sTargetSignals.setN(inBuf[12]);
       byte *p = inBuf + 13;
@@ -247,9 +248,11 @@ bool MyLD2410::processData()
     }
     else
     { // Basic mode only
+      isEnhanced = false;
       sData.mTargetSignals.setN(0);
       sData.sTargetSignals.setN(0);
       lightLevel = 0;
+      outLevel = 0;
     }
   }
   else
@@ -271,6 +274,8 @@ bool MyLD2410::begin()
   // Wait for the sensor to come online, or to timeout.
   unsigned long giveUp = millis() + timeout;
   bool online = false;
+  isConfig = false;
+  sendCommand(LD2410::configDisable);
   while (millis() < giveUp)
   {
     if (check())
