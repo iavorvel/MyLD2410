@@ -646,6 +646,20 @@ bool MyLD2410::setMaxStationaryGate(byte stationaryGate)
   return setMaxGate(movingThresholds.N, stationaryGate, noOne_window);
 }
 
+byte MyLD2410::getMaxMovingGate()
+{
+  if (!movingThresholds.N)
+    requestParameters();
+  return movingThresholds.N;
+}
+
+byte MyLD2410::getMaxStationaryGate()
+{
+  if (!stationaryThresholds.N)
+    requestParameters();
+  return stationaryThresholds.N;
+}
+
 bool MyLD2410::requestReset()
 {
   if (isConfig)

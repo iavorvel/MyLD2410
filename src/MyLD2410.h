@@ -62,7 +62,7 @@ public:
   struct ValuesArray
   {
     byte values[9];
-    byte N;
+    byte N = 0;
 
     void setN(byte n)
     {
@@ -414,9 +414,9 @@ public:
    * @brief Begin the automatic threshold detection routine
    * (firmware >= 2.44)
    *
-   * @param _timeout - allow for timeout [s] to leave the room 
+   * @param _timeout - allow for timeout [s] to leave the room
    * @return true on success
-   */ 
+   */
   bool autoThresholds(byte _timeout = 10);
 
   /**
@@ -518,6 +518,20 @@ public:
    * @return true on success
    */
   bool setMaxStationaryGate(byte stationaryGate);
+
+  /**
+   * @brief Get the maximum moving gate
+   *
+   * @return the maximum moving-target gate
+   */
+  byte getMaxMovingGate();
+
+  /**
+   * @brief Get the maximum stationary gate
+   *
+   * @return the maximum stationary-target gate
+   */
+  byte getMaxStationaryGate();
 
   /**
    * @brief Request reset to factory default parameters
