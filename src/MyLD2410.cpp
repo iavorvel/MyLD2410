@@ -568,9 +568,27 @@ bool MyLD2410::setGateParameters(byte gate, byte movingThreshold, byte stationar
   }
   cmd[12] = movingThreshold;
   cmd[18] = stationaryThreshold;
-  if (isConfig && sendCommand(cmd))
-    return sendCommand(LD2410::param);
+  if (isConfig)
+    return sendCommand(cmd) && sendCommand(LD2410::param);
   return configMode() && sendCommand(cmd) && sendCommand(LD2410::param) && configMode(false);
+}
+
+bool MyLD2410::setMovingThreshold(byte gate, byte movingThreshold)
+{
+  if (gate > 8)
+    return false;
+  if (!stationaryThresholds.N)
+    requestParameters();
+  return setGateParameters(gate, movingThreshold, stationaryThresholds.values[gate]);
+}
+
+bool MyLD2410::setStationaryThreshold(byte gate, byte stationaryThreshold)
+{
+  if (gate > 8)
+    return false;
+  if (!movingThresholds.N)
+    requestParameters();
+  return setGateParameters(gate, movingThresholds.values[gate], stationaryThreshold);
 }
 
 bool MyLD2410::setMaxGate(byte movingGate, byte staticGate, byte noOneWindow)

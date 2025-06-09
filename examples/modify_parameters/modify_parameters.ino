@@ -4,7 +4,7 @@
 
   #define SERIAL_BAUD_RATE sets the serial monitor baud rate
 
-  Communication with the sensor is handled by the 
+  Communication with the sensor is handled by the
   "MyLD2410" library Copyright (c) Iavor Veltchev 2024
 
   Use only hardware UART at the default baud rate 256000,
@@ -13,21 +13,21 @@
   modify the RX_PIN and TX_PIN defines
 
   Connection diagram:
-  Arduino/ESP32 RX  -- TX LD2410 
+  Arduino/ESP32 RX  -- TX LD2410
   Arduino/ESP32 TX  -- RX LD2410
   Arduino/ESP32 GND -- GND LD2410
-  Provide sufficient power to the sensor Vcc (200mA, 5-12V) 
+  Provide sufficient power to the sensor Vcc (200mA, 5-12V)
 */
 
 #if defined(ARDUINO_SAMD_NANO_33_IOT) || defined(ARDUINO_AVR_LEONARDO)
-//ARDUINO_SAMD_NANO_33_IOT RX_PIN is D1, TX_PIN is D0
-//ARDUINO_AVR_LEONARDO RX_PIN(RXI) is D0, TX_PIN(TXO) is D1
+// ARDUINO_SAMD_NANO_33_IOT RX_PIN is D1, TX_PIN is D0
+// ARDUINO_AVR_LEONARDO RX_PIN(RXI) is D0, TX_PIN(TXO) is D1
 #define sensorSerial Serial1
 #elif defined(ARDUINO_XIAO_ESP32C3) || defined(ARDUINO_XIAO_ESP32C6)
-//RX_PIN is D7, TX_PIN is D6
+// RX_PIN is D7, TX_PIN is D6
 #define sensorSerial Serial0
 #elif defined(ESP32)
-//Other ESP32 device - choose available GPIO pins
+// Other ESP32 device - choose available GPIO pins
 #define sensorSerial Serial1
 #if defined(ARDUINO_ESP32S3_DEV)
 #define RX_PIN 18
@@ -43,8 +43,8 @@
 // User defines
 #define SERIAL_BAUD_RATE 115200
 
-//Change the communication baud rate here, if necessary
-//#define LD2410_BAUD_RATE 256000
+// Change the communication baud rate here, if necessary
+// #define LD2410_BAUD_RATE 256000
 #include "MyLD2410.h"
 
 MyLD2410 sensor(sensorSerial);
@@ -102,7 +102,8 @@ void setup() {
   Serial.println(__FILE__);
   if (!sensor.begin()) {
     Serial.println("Failed to communicate with the sensor.");
-    while (true) {}
+    while (true) {
+    }
   }
 
   Serial.println("Current set of parameters");
@@ -113,47 +114,72 @@ void setup() {
   stationaryParameters = sensor.getStationaryThresholds();
 
   delay(2000);
-  //Set the no-one window parameter to 3 seconds
+  // Set the no-one window parameter to 3 seconds
   Serial.println("\nSetting the no-one window to 3 seconds");
-  if (sensor.setNoOneWindow(3)) printParameters();
+  if (sensor.setNoOneWindow(3))
+    printParameters();
   else {
     Serial.println("Fail");
     return;
   }
 
   delay(2000);
-  //Change the resolution fine->coarse or coarse->fine
+  // Change the resolution fine->coarse or coarse->fine
   Serial.print("\nSetting the resolution (gate-width) to ");
   Serial.print(((fineRes) ? 75 : 20));
   Serial.println("cm");
-  if (sensor.setResolution(!fineRes)) printParameters();
+  if (sensor.setResolution(!fineRes))
+    printParameters();
   else {
     Serial.println("Fail");
     return;
   }
 
   delay(2000);
-  //Set the maximum moving gate parameter to 4
+  // Set the maximum moving gate parameter to 4
   Serial.println("\nSetting the maximum moving gate parameter to 4");
-  if (sensor.setMaxMovingGate(4)) printParameters();
+  if (sensor.setMaxMovingGate(4))
+    printParameters();
   else {
     Serial.println("Fail");
     return;
   }
 
   delay(2000);
-  //Set the maximum stationary gate parameter to 5
+  // Set the maximum stationary gate parameter to 5
   Serial.println("\nSetting the maximum stationary gate parameter to 5");
-  if (sensor.setMaxStationaryGate(5)) printParameters();
+  if (sensor.setMaxStationaryGate(5))
+    printParameters();
   else {
     Serial.println("Fail");
     return;
   }
 
   delay(2000);
-  //Set the thresholds of gate 3 to 35 (moving) and 45 (stationary)
-  Serial.println("\nSetting the thresholds of gate 3 to 35 (moving) and 45 (stationary)");
-  if (sensor.setGateParameters(3, 35, 45)) printParameters();
+  // Set the thresholds of all gates to 35 (moving) and 45 (stationary)
+  Serial.println("\nSetting the thresholds of all gates to 35 (moving) and 45 (stationary)");
+  if (sensor.setGateParameters(0xFF, 35, 45))
+    printParameters();
+  else {
+    Serial.println("Fail");
+    return;
+  }
+
+  delay(2000);
+  // Set the moving target threshold of gate 3 to 15
+  Serial.println("\nSetting the moving target threshold of gate 3 to 15");
+  if (sensor.setMovingThreshold(3, 15))
+    printParameters();
+  else {
+    Serial.println("Fail");
+    return;
+  }
+
+  delay(2000);
+  // Set the stationary target threshold of gate 3 to 25
+  Serial.println("\nSetting the stationary target threshold of gate 3 to 25");
+  if (sensor.setStationaryThreshold(3, 25))
+    printParameters();
   else {
     Serial.println("Fail");
     return;

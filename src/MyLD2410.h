@@ -245,7 +245,7 @@ public:
   /**
    * @brief Get the signal from the stationary target
    *
-   * @return byte - signal value [0:100]
+   * @return byte - signal value [0 - 100]
    */
   byte stationaryTargetSignal();
 
@@ -271,7 +271,7 @@ public:
   /**
    * @brief Get the signal from the moving target
    *
-   * @return byte - signal value [0:100]
+   * @return byte - signal value [0 - 100]
    */
   byte movingTargetSignal();
 
@@ -473,7 +473,25 @@ public:
    * @param stationaryThreshold [0 - 100]
    * @return true on success
    */
-  bool setGateParameters(byte gate, byte movingThreshold = 100, byte stationaryThreshold = 100);
+  bool setGateParameters(byte gate, byte movingThreshold, byte stationaryThreshold);
+
+  /**
+   * @brief Set the moving target threshold for a particular gate
+   *
+   * @param gate the gate to configure [0 - 8]
+   * @param movingThreshold [0 - 100]
+   * @return true on success
+   */
+  bool setMovingThreshold(byte gate, byte movingThreshold);
+
+  /**
+   * @brief Set the stationary target threshold for a particular gate
+   *
+   * @param gate the gate to configure [0 - 8]
+   * @param stationaryhreshold [0 - 100]
+   * @return true on success
+   */
+  bool setStationaryThreshold(byte gate, byte stationaryThreshold);
 
   /**
    * @brief Set the parameters for all gates at once, as well as the no-one window
@@ -483,7 +501,8 @@ public:
    * @param noOneWindow
    * @return true on success
    */
-  bool setGateParameters(const ValuesArray &moving_thresholds, const ValuesArray &stationary_thresholds, byte noOneWindow = 5);
+  bool
+  setGateParameters(const ValuesArray &moving_thresholds, const ValuesArray &stationary_thresholds, byte noOneWindow = 5);
 
   /**
    * @brief Set the detection range for moving targets, stationary targets, as well as the no-one window
