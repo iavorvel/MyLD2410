@@ -105,37 +105,43 @@ bool MyLD2410::sendCommand(const byte *command)
   }
   return false;
 }
+
 bool MyLD2410::readFrame()
 {
   int frameSize = -1, bytes = 2;
-  if (bytes > 0)
-  {
-    inBufI = 0;
-    while (bytes)
-    {
-      if (sensor->available())
-      {
-        inBuf[inBufI++] = byte(sensor->read());
-        bytes--;
-      }
-    }
-    frameSize = 0;
-    for (byte i = 0; i < inBufI; i++)
-    {
-      frameSize |= inBuf[i] << i * 8;
-    }
-  }
-  if (frameSize <= 0)
-    return false;
-  frameSize += 4;
   inBufI = 0;
-  while (frameSize > 0)
+  unsigned long frameTimeout = millis() + 100;
+  while (bytes) // read two bytes for frame size
+  {
+
+    if (sensor->available())
+    {
+      inBuf[inBufI++] = byte(sensor->read());
+      bytes--;
+    }
+    else if (millis() > frameTimeout)
+      return false; // timeout
+  }
+
+  frameSize = (inBuf[0]) | (inBuf[1] << 8);
+
+  if (frameSize <= 0)
+    return false; // Corrupted frame received
+  frameSize += 4;
+  if (frameSize > LD2410_BUFFER_SIZE)
+    return false; // Frame too large, discard
+
+  inBufI = 0;
+  frameTimeout = millis() + 100;
+  while (frameSize > 0) // read the rest of the frame
   {
     if (sensor->available())
     {
       inBuf[inBufI++] = byte(sensor->read());
       frameSize--;
     }
+    else if (millis() > frameTimeout)
+      return false; // timeout
   }
   return true;
 }
