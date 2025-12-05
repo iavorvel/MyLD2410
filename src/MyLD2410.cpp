@@ -92,7 +92,7 @@ bool MyLD2410::sendCommand(const byte *command)
   sensor->write(command, size);
   sensor->write(LD2410::tailConfig, 4);
   sensor->flush();
-  unsigned long giveUp = millis() + timeout;
+  unsigned long giveUp = millis() + 2000UL;
   while (millis() < giveUp)
   {
     while (sensor->available())
@@ -226,13 +226,22 @@ bool MyLD2410::processData()
 {
   if (!readFrame())
     return false;
+  unsigned long now = millis();
   if (_debug)
+  {
+    Serial.print('#');
+    Serial.print(dataFrames + 1);
+    Serial.print(" [");
+    Serial.print(now);
+    Serial.print("ms] : ");
     LD2410::printBuf(inBuf, inBufI);
+  }
   if (!LD2410::bufferEndsWith(inBuf, inBufI, LD2410::tailData))
     return false;
   if (((inBuf[0] == 1) || (inBuf[0] == 2)) && (inBuf[1] == 0xAA))
   { // Basic mode and Enhanced
-    sData.timestamp = millis();
+    ++dataFrames;
+    sData.timestamp = now;
     sData.status = inBuf[2] & 7;
     sData.mTargetDistance = inBuf[3] | (inBuf[4] << 8);
     sData.mTargetSignal = inBuf[5];
@@ -278,7 +287,7 @@ MyLD2410::MyLD2410(Stream &serial, bool debug)
 bool MyLD2410::begin()
 {
   // Wait for the sensor to come online, or to timeout.
-  unsigned long giveUp = millis() + timeout;
+  unsigned long giveUp = millis() + 2000UL;
   bool online = false;
   isConfig = false;
   sendCommand(LD2410::configDisable);
@@ -335,9 +344,19 @@ const char *MyLD2410::statusString()
   return LD2410::tStatus[sData.status];
 }
 
+unsigned long MyLD2410::getTimestamp()
+{
+  return sData.timestamp;
+}
+
+unsigned long MyLD2410::getFrameCount()
+{
+  return dataFrames;
+}
+
 bool MyLD2410::isDataValid()
 {
-  return (millis() - sData.timestamp < dataLifespan);
+  return (millis() < sData.timestamp + 500UL);
 }
 
 bool MyLD2410::presenceDetected()

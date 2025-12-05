@@ -14,7 +14,9 @@ https://github.com/iavorvel/MyLD2410
  */
 
 #include <Arduino.h>
+#ifndef LD2410_BAUD_RATE
 #define LD2410_BAUD_RATE 256000
+#endif
 #define LD2410_BUFFER_SIZE 0x40
 #define LD2410_LATEST_FIRMWARE "2.44"
 
@@ -113,6 +115,7 @@ private:
   AutoStatus autoStatus = AutoStatus::NOT_SET;
   unsigned long version = 0;
   unsigned long bufferSize = 0;
+  unsigned long dataFrames = 0;
   byte MAC[6];
   String MACstr = "";
   String firmware = "";
@@ -121,8 +124,6 @@ private:
   int fineRes = -1;
   bool isEnhanced = false;
   bool isConfig = false;
-  unsigned long timeout = 2000;
-  unsigned long dataLifespan = 500;
   byte inBuf[LD2410_BUFFER_SIZE];
   byte inBufI = 0;
   byte headBuf[4];
@@ -224,6 +225,18 @@ public:
    * "Auto thresholds failed".
    */
   const char *statusString();
+
+  /**
+   * @brief Get the time (in milliseconds) of the last successfully received data frame
+   */
+  unsigned long getTimestamp();
+
+  /**
+   * @brief Get the number of data frames received so far
+   *
+   * @return unsigned long
+   */
+  unsigned long getFrameCount();
 
   /**
    * @brief Check whether presence was detected in the latest frame

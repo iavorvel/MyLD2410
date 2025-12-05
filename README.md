@@ -43,7 +43,9 @@ HLK-LD2410B<br>
 
 * Create a global instance of the sensor object
 
-`MyLD2410 sensor(sensorSerial);`
+```c++
+MyLD2410 sensor(sensorSerial);
+```
 
 * In the `setup()` function, begin serial communication with baud rate `LD2420_BAUD_RATE` (256000). On ESP32-WROOM: RX_PIN(16), TX_PIN(17). Check the exact pin numbers for your board. Then call `sensor.begin()` to begin communication with the sensor.
 
@@ -51,8 +53,8 @@ HLK-LD2410B<br>
 sensorSerial.begin(LD2410_BAUD_RATE, SERIAL_8N1, RX_PIN, TX_PIN);
 
 if (!sensor.begin()) {
-  Serial.println("Failed to communicate with the sensor");
-  while (true);
+Serial.println("Failed to communicate with the sensor");
+while (true);
 }
 ```
 
@@ -66,8 +68,14 @@ if (!sensor.begin()) {
 
 * Use the many convenience functions to extract/modify the sensor data (see the examples below).
 
+* There is a useful **Debug** feature that prints all frames received from the sensor. To enable debugging you instantiate the sensor with a second argument set to true:
+
+    `MyLD2410 sensor(sensorSerial, true);`
+
+    Debugging can be enabled and disabled at runtime with `sensor.debugOn();` and  `sensor.debugOff();`
+
 ## Examples
-* Once the library is installed, navigate to: `File`&rarr;`Examples`&rarr;`MyLD2410` to play with the examples. They are automatically configured for some popular boards (see the table above). For other boards, minor (trivial) modifications may be necessary.  
+* Once the library is installed, navigate to: `File`&rarr;`Examples`&rarr;`MyLD2410` to play with the examples. They are automatically configured for some popular boards (see the table above). For other boards, minor (trivial) modifications may be necessary. Study the `board_select.h` header file in each example.
     
     1. `sensor_data` - retrieves all data frames from the sensor and outputs useful information every second. Handles both basic and enhanced (engineering) modes.
 
@@ -120,5 +128,7 @@ if (!sensor.begin()) {
         - To restore the default password, uncomment the line `#define RESET_PASSWORD` and flash the sketch again.
 
     1. `set_baud_rate` - sets and tests a new baud rate for communication with the sensor. _Be careful not to get locked out of your sensor._
+        
+        - This is useful when you intend to use the LD2410 sensor on a board like Arduino Nano/Uno. First lower the baud rate to 38400 and then use `SoftwareSerial` to communicate on pins 10 (RX) and 11 (TX). Check out the `board_select.h` header file in `sensor_data`.
 
 ## Have fun!
