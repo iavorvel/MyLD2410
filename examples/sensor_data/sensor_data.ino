@@ -124,13 +124,13 @@ void setup() {
   sensor.enhancedMode(false);
 #endif
 
-  delay(printEvery);
+  delay(20);
 }
 
 void loop() {
-  static unsigned long nextPrint = 0;
-  if ((sensor.check() == MyLD2410::Response::DATA) && (millis() >= nextPrint)) {
-    nextPrint = millis() + printEvery;
+  static unsigned long lastPrint = 0;
+  if ((sensor.check() == MyLD2410::Response::DATA) && (millis() - lastPrint >= printEvery)) {
+    lastPrint = millis();
     printData();
   }
 }

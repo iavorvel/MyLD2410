@@ -81,18 +81,36 @@ while (true);
 
         Sample output:
         ```text
-        Both moving and stationary, distance: 131cm
-        MOVING    = 100@30cm 
-        signals->[ 100 100 31 36 34 30 10 3 6 ] thresholds:[ 50 50 40 30 20 15 15 15 15 ]
-        STATIONARY= 100@263cm 
-        signals->[ 0 0 82 100 100 79 79 71 35 ] thresholds:[ 0 0 40 40 30 30 20 20 20 ]
-        Light level: 175
+        Data frame #: 142
+        Time stamp [ms]: 16244
+        Stationary only, distance: 38cm
+        STATIONARY= 100@30cm 
+        signals->[ 0 0 100 90 31 13 9 7 5 ] thresholds:[ 0 0 40 40 30 30 20 20 20 ]
+        Light level: 218
         Output level: HIGH
+
+        Data frame #: 152
+        Time stamp [ms]: 17244
+        Both moving and stationary, distance: 33cm
+        MOVING    = 70@30cm 
+        signals->[ 70 51 64 67 24 8 8 6 3 ] thresholds:[ 50 50 40 30 20 15 15 15 15 ]
+        STATIONARY= 100@91cm 
+        signals->[ 0 0 100 100 51 18 16 14 7 ] thresholds:[ 0 0 40 40 30 30 20 20 20 ]
+        Light level: 234
+        Output level: HIGH        
         ```
 
         ```text
+        Data frame #: 153
+        Time stamp [ms]: 17297
         No target
-        Light level: 163
+        Light level: 240
+        Output level: LOW
+
+        Data frame #: 163
+        Time stamp [ms]: 18297
+        No target
+        Light level: 240
         Output level: LOW
         ```
     
